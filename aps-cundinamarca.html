@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="google" content="notranslate" />
+<meta http-equiv="Content-Language" content="es" />
+<title>APS Cundinamarca — Sistema Inteligente de Evaluación APS</title>
+<style>
+:root{--bg:#062F5F;--bg2:#0B4F9E;--accent:#FCE803;--red:#C8102E;--green:#0A8A3F;--light:#f0f4f8;--gray:#64748b;--dark:#1e293b;--white:#fff;--radius:12px;--shadow:0 4px 24px rgba(6,47,95,.12)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--light);color:var(--dark);line-height:1.6}
+/* Landing page */
+.landing{min-height:100vh;background:linear-gradient(135deg,var(--bg) 0%,var(--bg2) 100%);display:flex;align-items:center;justify-content:center;padding:2rem}
+.landing-card{background:var(--white);border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.3);max-width:800px;width:100%;padding:3rem;text-align:center}
+.landing-logo{width:80px;height:80px;background:var(--accent);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:800;color:var(--bg);margin:0 auto 1.5rem}
+.landing-card h1{color:var(--bg);font-size:2rem;margin-bottom:.5rem}
+.landing-card .subtitle{color:var(--gray);font-size:1rem;margin-bottom:2rem}
+.landing-card .intro{text-align:left;font-size:.9rem;color:var(--dark);margin-bottom:2rem;line-height:1.8}
+.landing-card .objectives{text-align:left;margin-bottom:2rem}
+.landing-card .objectives h3{color:var(--bg);font-size:1.1rem;margin-bottom:.75rem}
+.landing-card .objectives li{margin-bottom:.4rem;font-size:.85rem}
+.landing-btn{background:var(--bg2);color:var(--white);border:none;padding:1rem 2.5rem;border-radius:10px;font-size:1.1rem;font-weight:700;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:.5rem}
+.landing-btn:hover{background:var(--bg);transform:translateY(-2px);box-shadow:0 8px 24px rgba(11,79,158,.4)}
+.landing-btn.accent{background:var(--accent);color:var(--bg)}
+/* Login */
+.login-overlay{position:fixed;inset:0;background:linear-gradient(135deg,var(--bg),var(--bg2));display:flex;align-items:center;justify-content:center;z-index:999;padding:1rem}
+.login-box{background:var(--white);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.3);max-width:420px;width:100%;padding:2.5rem}
+.login-box .logo{width:56px;height:56px;background:var(--accent);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:800;color:var(--bg);margin:0 auto 1rem}
+.login-box h2{color:var(--bg);text-align:center;font-size:1.3rem;margin-bottom:.25rem}
+.login-box p{color:var(--gray);text-align:center;font-size:.82rem;margin-bottom:1.5rem}
+.login-box .form-group{margin-bottom:1rem}
+.login-box label{display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem;color:var(--dark)}
+.login-box input{width:100%;padding:.7rem .9rem;border:2px solid #e2e8f0;border-radius:8px;font-size:.9rem;font-family:inherit}
+.login-box input:focus{outline:none;border-color:var(--bg2);box-shadow:0 0 0 3px rgba(11,79,158,.1)}
+.login-box .btn-login{width:100%;background:var(--bg2);color:var(--white);border:none;padding:.85rem;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;transition:.2s;margin-top:.5rem}
+.login-box .btn-login:hover{background:var(--bg)}
+.login-box .login-links{display:flex;justify-content:space-between;margin-top:1rem;font-size:.78rem}
+.login-box .login-links a{color:var(--bg2);text-decoration:none;cursor:pointer}
+.login-box .login-links a:hover{text-decoration:underline}
+.login-box .role-badge{display:inline-block;padding:.2rem .6rem;border-radius:12px;font-size:.7rem;font-weight:700;margin:0 .2rem .5rem 0}
+.role-evaluador{background:#dbeafe;color:#1e40af}
+.role-admin{background:#fef3c7;color:#92400e}
+.login-error{background:#fee2e2;color:#991b1b;padding:.6rem .8rem;border-radius:8px;font-size:.8rem;margin-top:.5rem;display:none}
+.login-error.show{display:block}
+/* Header */
+.app-header{background:linear-gradient(135deg,var(--bg),var(--bg2));color:var(--white);padding:.75rem 1.5rem;position:sticky;top:0;z-index:100;box-shadow:var(--shadow)}
+.app-header-inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+.app-logo{display:flex;align-items:center;gap:.6rem;cursor:pointer}
+.app-logo-icon{width:36px;height:36px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:800;color:var(--bg)}
+.app-logo h1{font-size:.95rem;font-weight:700}
+.app-logo p{font-size:.62rem;opacity:.85}
+.user-info{display:flex;align-items:center;gap:.75rem}
+.user-badge{font-size:.78rem}
+.user-badge .name{font-weight:600}
+.user-badge .role{font-size:.68rem;opacity:.8}
+.logout-btn{background:rgba(255,255,255,.15);color:var(--white);border:1px solid rgba(255,255,255,.2);padding:.4rem .8rem;border-radius:6px;cursor:pointer;font-size:.78rem;transition:.2s}
+.logout-btn:hover{background:var(--red);border-color:var(--red)}
+/* Nav */
+.nav-bar{background:var(--white);border-bottom:1px solid #e2e8f0;padding:0 1rem;display:flex;gap:.25rem;overflow-x:auto;position:sticky;top:57px;z-index:99;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.nav-bar button{background:transparent;border:none;padding:.7rem 1rem;font-size:.82rem;font-weight:600;color:var(--gray);cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;transition:.2s}
+.nav-bar button:hover{color:var(--bg2)}
+.nav-bar button.active{color:var(--bg2);border-bottom-color:var(--bg2)}
+/* Container */
+.app-container{max-width:1400px;margin:0 auto;padding:1.5rem}
+.section{display:none}.section.active{display:block}
+/* Card */
+.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:1.5rem;margin-bottom:1.5rem}
+.card h2{color:var(--bg);font-size:1.15rem;margin-bottom:.5rem}
+.card .subtitle{color:var(--gray);font-size:.82rem;margin-bottom:1rem}
+/* Education */
+.edu-hero{background:linear-gradient(135deg,var(--bg),var(--bg2));color:var(--white);border-radius:var(--radius);padding:2rem;margin-bottom:1.5rem;text-align:center}
+.edu-hero h2{color:var(--white);font-size:1.5rem;margin-bottom:.5rem}
+.edu-hero p{opacity:.9;font-size:.9rem}
+.edu-sphere{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:1.5rem;margin-bottom:1.5rem;border-top:5px solid var(--bg2)}
+.edu-sphere h3{color:var(--bg);font-size:1.15rem;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem}
+.edu-sphere .sphere-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.5rem}
+.edu-sphere.blue .sphere-icon{background:#dbeafe;color:var(--bg2)}
+.edu-sphere.green .sphere-icon{background:#dcfce7;color:var(--green)}
+.edu-sphere.yellow .sphere-icon{background:#fef9c3;color:#b8860b}
+.edu-sphere h4{color:var(--bg2);font-size:.85rem;margin:1rem 0 .3rem;text-transform:uppercase;letter-spacing:.05em}
+.edu-sphere p{font-size:.85rem;margin-bottom:.5rem}
+.edu-sphere ul{margin-left:1.2rem;font-size:.85rem}
+.edu-sphere li{margin-bottom:.2rem}
+.edu-confirm{background:#fffbeb;border:2px solid #f59e0b;border-radius:8px;padding:1rem;text-align:center;margin:1.5rem 0}
+.edu-confirm label{display:flex;align-items:center;justify-content:center;gap:.5rem;font-size:.9rem;font-weight:600;cursor:pointer}
+.edu-confirm input{width:20px;height:20px;cursor:pointer}
+.edu-progbar{height:6px;background:#e2e8f0;border-radius:3px;margin-bottom:1rem;overflow:hidden}
+.edu-progbar-fill{height:100%;background:var(--green);border-radius:3px;transition:width .5s}
+/* Form */
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem}
+.form-group{display:flex;flex-direction:column;gap:.3rem}
+.form-group label{font-size:.82rem;font-weight:600;color:var(--dark)}
+.form-group label .req{color:var(--red)}
+.form-group input,.form-group select,.form-group textarea{padding:.6rem .8rem;border:2px solid #e2e8f0;border-radius:8px;font-size:.85rem;font-family:inherit;transition:.2s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--bg2);box-shadow:0 0 0 3px rgba(11,79,158,.1)}
+.form-group input:disabled,.form-group select:disabled{background:#f1f5f9;color:#94a3b8}
+.section-label{font-size:.75rem;color:var(--bg2);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin:1.5rem 0 .5rem;padding-bottom:.25rem;border-bottom:2px solid #e2e8f0}
+.progbar{height:8px;background:#e2e8f0;border-radius:4px;margin-bottom:1rem;overflow:hidden}
+.progbar-fill{height:100%;background:linear-gradient(90deg,var(--bg2),var(--green));border-radius:4px;transition:width .5s;display:flex;align-items:center;justify-content:flex-end;padding-right:.4rem;color:var(--white);font-size:.65rem;font-weight:700}
+.q-block{background:#f8fafc;border-radius:8px;padding:1rem;margin-bottom:.75rem;border:1px solid #e2e8f0}
+.q-block .q-text{font-weight:600;margin-bottom:.5rem;font-size:.85rem}
+.q-block .q-text .q-num{color:var(--bg2);font-weight:800;margin-right:.4rem}
+.scale-opts{display:flex;gap:.4rem;flex-wrap:wrap}
+.scale-opts label{display:flex;flex-direction:column;align-items:center;padding:.35rem .55rem;border:2px solid #e2e8f0;border-radius:6px;cursor:pointer;transition:.2s;min-width:65px;font-size:.72rem}
+.scale-opts label:hover{border-color:var(--bg2)}
+.scale-opts input{display:none}
+.scale-opts label:has(input:checked){border-color:var(--bg2);background:#eff6ff}
+.scale-opts .opt-num{font-size:1rem;font-weight:800;color:var(--bg2)}
+.scale-opts .opt-text{font-size:.65rem;color:var(--gray);text-align:center}
+/* Buttons */
+.btn{background:var(--bg2);color:var(--white);border:none;padding:.7rem 1.4rem;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:600;transition:.2s;display:inline-flex;align-items:center;gap:.4rem}
+.btn:hover{background:var(--bg)}
+.btn-accent{background:var(--accent);color:var(--bg)}
+.btn-accent:hover{background:#e0c702}
+.btn-red{background:var(--red)}
+.btn-green{background:var(--green)}
+.btn-large{padding:1rem 2rem;font-size:1rem}
+/* Stats */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:1.5rem}
+.stat-card{background:var(--white);border-radius:var(--radius);padding:1.1rem;box-shadow:var(--shadow);border-left:4px solid var(--bg2)}
+.stat-card .label{font-size:.72rem;color:var(--gray);text-transform:uppercase;letter-spacing:.05em}
+.stat-card .value{font-size:1.8rem;font-weight:800;color:var(--bg)}
+.stat-card .desc{font-size:.72rem;color:var(--gray);margin-top:.2rem}
+.stat-card.green{border-left-color:var(--green)}.stat-card.green .value{color:var(--green)}
+.stat-card.yellow{border-left-color:#b8860b}.stat-card.yellow .value{color:#b8860b}
+.stat-card.red{border-left-color:var(--red)}.stat-card.red .value{color:var(--red)}
+.stat-card.accent{border-left-color:var(--accent)}
+/* Table */
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+table th{background:var(--bg);color:var(--white);padding:.6rem .5rem;text-align:left;font-weight:600;position:sticky;top:0}
+table td{padding:.6rem .5rem;border-bottom:1px solid #e2e8f0;vertical-align:top}
+table tr:nth-child(even){background:#f8fafc}
+table tr:hover{background:#eff6ff}
+.table-wrap{max-height:500px;overflow:auto;border-radius:8px;border:1px solid #e2e8f0}
+.pill{display:inline-block;padding:.15rem .6rem;border-radius:12px;font-size:.7rem;font-weight:700}
+.pill-green{background:#dcfce7;color:#166534}.pill-yellow{background:#fef9c3;color:#854d0e}.pill-red{background:#fee2e2;color:#991b1b}.pill-blue{background:#dbeafe;color:#1e40af}.pill-gray{background:#f1f5f9;color:#475569}
+/* Charts */
+.chart-container{background:var(--white);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);margin-bottom:1.5rem}
+.chart-container h3{color:var(--bg);font-size:1rem;margin-bottom:.75rem}
+.bar-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem}
+.bar-row .bar-label{width:180px;font-size:.78rem;font-weight:600;flex-shrink:0}
+.bar-row .bar-track{flex:1;height:22px;background:#e2e8f0;border-radius:5px;overflow:hidden}
+.bar-row .bar-fill{height:100%;border-radius:5px;display:flex;align-items:center;justify-content:flex-end;padding-right:.4rem;color:var(--white);font-size:.7rem;font-weight:700;transition:width .8s}
+.semaforo{width:14px;height:14px;border-radius:50%;display:inline-block}
+.semaforo.green{background:var(--green)}.semaforo.yellow{background:#facc15}.semaforo.red{background:var(--red)}
+/* Filters */
+.filter-bar{display:flex;flex-wrap:wrap;gap:.75rem;margin-bottom:1rem;align-items:flex-end}
+.filter-bar .form-group{min-width:140px}
+.filter-bar select,.filter-bar input{padding:.45rem .6rem;font-size:.8rem}
+/* Alerts */
+.alert-box{background:#fef2f2;border:2px solid var(--red);border-radius:8px;padding:.75rem 1rem;margin-bottom:.5rem;font-size:.82rem;display:flex;align-items:center;gap:.5rem}
+.alert-box.warning{background:#fffbeb;border-color:#f59e0b}
+.alert-box.info{background:#eff6ff;border-color:var(--bg2)}
+/* Toast */
+.toast{position:fixed;bottom:1rem;right:1rem;background:var(--green);color:var(--white);padding:.6rem 1.2rem;border-radius:8px;font-size:.85rem;box-shadow:var(--shadow);opacity:0;transition:.3s;z-index:300;pointer-events:none}
+.toast.show{opacity:1}
+.toast.error{background:var(--red)}
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(6,47,95,.5);display:none;align-items:center;justify-content:center;z-index:1000;padding:1rem}
+.modal-overlay.show{display:flex}
+.modal{background:var(--white);border-radius:var(--radius);padding:1.5rem;max-width:800px;width:100%;max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal h2{color:var(--bg);margin-bottom:1rem}
+.modal-close{float:right;cursor:pointer;background:none;border:none;font-size:1.5rem;color:var(--gray)}
+/* Glossary */
+.glossary-item{border-bottom:1px solid #e2e8f0;padding:1rem 0;cursor:pointer}
+.glossary-item h4{color:var(--bg);font-size:.95rem;display:flex;align-items:center;gap:.3rem}
+.glossary-item h4 .arrow{font-size:.7rem;transition:.2s}
+.glossary-item.open h4 .arrow{transform:rotate(90deg)}
+.glossary-detail{display:none;margin-top:.5rem;font-size:.82rem;color:var(--gray)}
+.glossary-item.open .glossary-detail{display:block}
+.glossary-detail p{margin-bottom:.3rem}
+.glossary-detail b{color:var(--bg2)}
+/* Country cases */
+.country-card{background:var(--white);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);border-left:4px solid var(--accent);margin-bottom:1rem;cursor:pointer;transition:.2s}
+.country-card:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(6,47,95,.15)}
+.country-card h4{color:var(--bg);font-size:1rem;margin-bottom:.25rem;display:flex;align-items:center;gap:.5rem}
+.country-card .country-meta{font-size:.78rem;color:var(--gray);margin-bottom:.5rem}
+.country-card p{font-size:.82rem;color:var(--gray)}
+/* User management */
+.user-row{display:flex;align-items:center;justify-content:space-between;padding:.75rem;border-bottom:1px solid #e2e8f0}
+.user-row .user-name{font-weight:600;font-size:.88rem}
+.user-row .user-email{font-size:.78rem;color:var(--gray)}
+.user-row .user-ese{font-size:.78rem;color:var(--bg2)}
+.user-row .user-status{font-size:.72rem}
+.approve-btn{background:var(--green);color:var(--white);border:none;padding:.3rem .7rem;border-radius:6px;cursor:pointer;font-size:.75rem;font-weight:600}
+.approve-btn:hover{background:#087a37}
+.reject-btn{background:var(--red);color:var(--white);border:none;padding:.3rem .7rem;border-radius:6px;cursor:pointer;font-size:.75rem;font-weight:600}
+@media(max-width:768px){.app-container{padding:1rem}.app-header{padding:.6rem 1rem}.app-logo h1{font-size:.85rem}.nav-bar{top:50px}.nav-bar button{padding:.5rem .7rem;font-size:.75rem}.form-grid{grid-template-columns:1fr}.bar-row .bar-label{width:120px;font-size:.72rem}.landing-card{padding:1.5rem}.landing-card h1{font-size:1.5rem}}
+</style>
+</head>
+<body>
+
+<!-- ============ LANDING PAGE ============ -->
+<div class="landing" id="landing-page">
+<div class="landing-card">
+<div class="landing-logo">APS</div>
+<h1>Sistema Inteligente de Evaluación APS</h1>
+<p class="subtitle">Atención Primaria de Salud · Cundinamarca · Marco OMS 2024</p>
+<div class="intro">
+<p>Plataforma institucional para la autoevaluación de la estrategia de Atención Primaria en Salud (APS), basada en el <strong>Informe Mundial sobre APS de la OMS (2024)</strong> y la <strong>Declaración de Astaná (2018)</strong>.</p>
+</div>
+<div class="objectives">
+<h3>📋 Objetivos del Sistema</h3>
+<ul>
+<li>📍 Evaluar el nivel de implementación de las 8 palancas operativas de APS en hospitales y ESE de Cundinamarca</li>
+<li>📊 Consolidar resultados por región, municipio e institución con semaforización automática</li>
+<li>🎯 Generar planes de acción inteligentes basados en los hallazgos de autoevaluación</li>
+<li>⏱️ Hacer seguimiento al cumplimiento de actividades con cronogramas automáticos</li>
+<li>🌍 Comparar resultados con casos de país de referencia internacional</li>
+<li>📄 Exportar reportes para Secretaría de Salud y Ministerio de Salud</li>
+</ul>
+</div>
+<button class="landing-btn accent" id="landing-login-btn">🔑 Ingresar al Sistema</button>
+</div>
+</div>
+
+<!-- ============ LOGIN ============ -->
+<div class="login-overlay" id="login-page" style="display:none">
+<div class="login-box">
+<div class="logo">APS</div>
+<h2>Inicio de Sesión</h2>
+<p>Sistema de Autoevaluación APS Cundinamarca</p>
+<div class="login-error" id="login-error"></div>
+<div class="form-group">
+<label>Usuario (correo institucional)</label>
+<input type="email" id="login-email" placeholder="correo@hospital.gov.co" onkeypress="if(event.key==='Enter')doLogin()">
+</div>
+<div class="form-group">
+<label>Contraseña</label>
+<input type="password" id="login-pass" placeholder="Contraseña temporal" onkeypress="if(event.key==='Enter')doLogin()">
+</div>
+<button class="btn-login" onclick="doLogin()">Ingresar</button>
+<div class="login-links">
+<button type="button" id="lnk-recovery" style="background:none;border:none;color:var(--bg2);cursor:pointer;font-size:.78rem;text-decoration:underline;padding:0">¿Olvidó su contraseña?</button>
+<button type="button" id="lnk-register" style="background:none;border:none;color:var(--bg2);cursor:pointer;font-size:.78rem;text-decoration:underline;padding:0">Solicitar acceso</button>
+</div>
+<div style="margin-top:1.5rem;padding:.75rem;background:#f0f4f8;border-radius:8px;font-size:.75rem;color:var(--gray);text-align:center">
+<strong>Demo:</strong><br>Admin: <code>admin@aps.gov.co</code> / <code>admin123</code><br>Evaluador: <code>evaluador@aps.gov.co</code> / <code>eval123</code>
+</div>
+</div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app" style="display:none">
+<div class="app-header">
+<div class="app-header-inner">
+<div class="app-logo" onclick="navTo('dashboard')">
+<div class="app-logo-icon">APS</div>
+<div><h1>APS Cundinamarca</h1><p>Sistema Inteligente de Evaluación</p></div>
+</div>
+<div class="user-info">
+<div class="user-badge">
+<div class="name" id="user-name">—</div>
+<div class="role" id="user-role">—</div>
+</div>
+<button class="logout-btn" onclick="doLogout()">🚪 Cerrar Sesión</button>
+</div>
+</div>
+</div>
+
+<div class="nav-bar" id="nav-bar"></div>
+
+<div class="app-container">
+
+<!-- DASHBOARD -->
+<div class="section active" id="section-dashboard"></div>
+<!-- BIENVENIDA EDUCATIVA -->
+<div class="section" id="section-bienvenida"></div>
+<!-- AUTOEVALUACIÓN -->
+<div class="section" id="section-autoeval"></div>
+<!-- GESTIÓN USUARIOS (admin) -->
+<div class="section" id="section-usuarios"></div>
+<!-- REGISTROS -->
+<div class="section" id="section-registros"></div>
+<!-- RANKING -->
+<div class="section" id="section-ranking"></div>
+<!-- PLAN ACCIÓN -->
+<div class="section" id="section-plan"></div>
+<!-- SEGUIMIENTO -->
+<div class="section" id="section-seguimiento"></div>
+<!-- CASOS PAÍS -->
+<div class="section" id="section-casos"></div>
+<!-- GLOSARIO -->
+<div class="section" id="section-glosario"></div>
+<!-- CONFIGURACIÓN -->
+<div class="section" id="section-config"></div>
+
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="modal-overlay" id="modal"><div class="modal"><span class="modal-close" onclick="closeModal()">&times;</span><div id="modal-content"></div></div></div>
+
+<script>
+// ============================================================
+// ESTRUCTURA JERÁRQUICA CUNDINAMARCA
+// ============================================================
+const HIERARCHY=[{"region":"Bajo Magdalena","municipios":[{"nombre":"Caparrapí","eses":["E.S.E. HOSPITAL SAN JOSE DE GUADUAS"]},{"nombre":"Chaguaní","eses":["E.S.E. HOSPITAL SAN JOSE DE GUADUAS"]},{"nombre":"Guaduas","eses":["E.S.E. HOSPITAL SAN JOSE DE GUADUAS"]},{"nombre":"Puerto Salgar","eses":["E.S.E. HOSPITAL DIOGENES TRONCOSO DE PUERTO SALGAR"]}]},{"region":"Centro","municipios":[{"nombre":"Anapoima","eses":["E.S.E. HOSPITAL PEDRO LEON ALVAREZ DIAZ"]},{"nombre":"Anolaima","eses":["E.S.E. HOSPITAL SAN ANTONIO DE ANOLAIMA"]},{"nombre":"Cachipay","eses":["E.S.E. HOSPITAL PEDRO LEON ALVAREZ DIAZ"]},{"nombre":"El Colegio","eses":["ESE HOSPITAL NUESTRA SEÑORA DEL CARMEN DE EL COLEGIO"]},{"nombre":"La Mesa","eses":["E.S.E. HOSPITAL PEDRO LEON ALVAREZ DIAZ"]},{"nombre":"Quipile","eses":["E.S.E. HOSPITAL SAN ANTONIO DE ANOLAIMA"]},{"nombre":"San Antonio Del Tequendama","eses":["E.S.E. HOSPITAL SAN ANTONIO DEL TEQUENDAMA"]},{"nombre":"Tena","eses":["E.S.E. HOSPITAL PEDRO LEON ALVAREZ DIAZ"]}]},{"region":"Centro Oriente Almeidas","municipios":[{"nombre":"Chocontá","eses":["E.S.E. REGION DE SALUD CENTRO ORIENTE ALMEIDAS"]},{"nombre":"Macheta","eses":["E.S.E. REGION DE SALUD CENTRO ORIENTE ALMEIDAS"]},{"nombre":"Manta","eses":["E.S.E. REGION DE SALUD CENTRO ORIENTE ALMEIDAS"]},{"nombre":"Suesca","eses":["E.S.E. HOSPITAL NUESTRA SEÑORA DEL ROSARIO SUESCA"]},{"nombre":"Tibirita","eses":["E.S.E. REGION DE SALUD CENTRO ORIENTE ALMEIDAS"]},{"nombre":"Villapinzón","eses":["E.S.E. REGION DE SALUD CENTRO ORIENTE ALMEIDAS"]}]},{"region":"Centro Oriente Guavio","municipios":[{"nombre":"Gachala","eses":["E.S.E. HOSPITAL SAN FRANCISCO DE GACHETA"]},{"nombre":"Gachetá","eses":["E.S.E. HOSPITAL SAN FRANCISCO DE GACHETA"]},{"nombre":"Gama","eses":["E.S.E. HOSPITAL SAN FRANCISCO DE GACHETA"]},{"nombre":"Guasca","eses":["E.S.E. HOSPITAL SAN ANTONIO DE GUATAVITA"]},{"nombre":"Guatavita","eses":["E.S.E. HOSPITAL SAN ANTONIO DE GUATAVITA"]},{"nombre":"Junín","eses":["E.S.E POLICLINICO DE JUNIN"]},{"nombre":"La Calera","eses":["E.S.E. HOSPITAL DIVINO SALVADOR DE SOPO"]},{"nombre":"Sopó","eses":["E.S.E. HOSPITAL DIVINO SALVADOR DE SOPO"]},{"nombre":"Tocancipá","eses":["CARE & HEALTH S.A.S"]},{"nombre":"Ubalá","eses":["E.S.E. HOSPITAL SAN FRANCISCO DE GACHETA"]}]},{"region":"Medina","municipios":[{"nombre":"Medina","eses":["E.S.E. REGION DE SALUD MEDINA"]},{"nombre":"Paratebueno","eses":["E.S.E. REGION DE SALUD MEDINA"]},{"nombre":"Ubalá","eses":["E.S.E. REGION DE SALUD MEDINA"]}]},{"region":"Noroccidente","municipios":[{"nombre":"La Peña","eses":["E.S.E. HOSPITAL SALAZAR VILLETA"]},{"nombre":"La Vega","eses":["E.S.E. HOSPITAL DE LA VEGA"]},{"nombre":"Nimaima","eses":["E.S.E. CENTRO DE SALUD SAN JOSE DE NIMAIMA"]},{"nombre":"Nocaima","eses":["E.S.E. HOSPITAL DE LA VEGA"]},{"nombre":"Quebradanegra","eses":["E.S.E. HOSPITAL SALAZAR VILLETA"]},{"nombre":"San Francisco","eses":["E.S.E. CENTRO DE SALUD SAN FRANCISCO DE SALES"]},{"nombre":"Sasaima","eses":["E.S.E. HOSPITAL HILARIO LUGO DE SASAIMA"]},{"nombre":"Útica","eses":["E.S.E. HOSPITAL SALAZAR VILLETA"]},{"nombre":"Vergara","eses":["E.S.E. HOSPITAL SANTA BARBARA DE VERGARA"]},{"nombre":"Villeta","eses":["E.S.E. HOSPITAL SALAZAR VILLETA"]}]},{"region":"Nororiente","municipios":[{"nombre":"Carmen De Carupa","eses":["ESE HOSPITAL HABACUC CALDERON DE CARMEN DE CARUPA"]},{"nombre":"Cucunubá","eses":["E.S.E. CENTRO DE SALUD CUCUNUBA"]},{"nombre":"Fúquene","eses":["E.S.E. HOSPITAL EL SALVADOR DE UBATE"]},{"nombre":"Guachetá","eses":["ESE HOSPITAL SAN JOSE DE GUACHETA"]},{"nombre":"Lenguazaque","eses":["E.S.E. HOSPITAL EL SALVADOR DE UBATE"]},{"nombre":"Simijaca","eses":["E.S.E. HOSPITAL EL SALVADOR DE UBATE"]},{"nombre":"Susa","eses":["E.S.E. HOSPITAL EL SALVADOR DE UBATE"]},{"nombre":"Sutatausa","eses":["E.S.E. HOSPITAL EL SALVADOR DE UBATE"]},{"nombre":"Tausa","eses":["E.S.E. E.S.E. CENTRO DE SALUD DE TAUSA"]},{"nombre":"Villa De San Diego De Ubate","eses":["E.S.E. HOSPITAL EL SALVADOR DE UBATE"]}]},{"region":"Norte","municipios":[{"nombre":"El Peñón","eses":["E.S.E. CAYETANO MARIA DE ROJAS"]},{"nombre":"La Palma","eses":["E.S.E. HOSPITAL SAN JOSE"]},{"nombre":"Pacho","eses":["E.S.E. HOSPITAL SAN RAFAEL DE PACHO"]},{"nombre":"Paime","eses":["E.S.E. HOSPITAL SAN RAFAEL DE PACHO"]},{"nombre":"Supatá","eses":["E.S.E. HOSPITAL SAN RAFAEL DE PACHO"]},{"nombre":"Topaipí","eses":["E.S.E. HOSPITAL SAN RAFAEL DE PACHO"]},{"nombre":"Villagómez","eses":["E.S.E. HOSPITAL SAN RAFAEL DE PACHO"]},{"nombre":"Yacopí","eses":["E.S.E. HOSPITAL SAN JOSE"]}]},{"region":"Sabana Centro","municipios":[{"nombre":"Cajicá","eses":["ESE HOSPITAL PROFESOR JORGE CAVELIER -I- NIVEL DE ATENCION CAJICA"]},{"nombre":"Chía","eses":["E.S.E. HOSPITAL SAN ANTONIO CHIA"]},{"nombre":"Cogua","eses":["ESE HOSPITAL UNIVERSITARIO DE LA SAMARITANA"]},{"nombre":"Cota","eses":["E.S.E. HOSPITAL SAN ANTONIO CHIA"]},{"nombre":"Gachancipá","eses":["ESE HOSPITAL SAN ANTONIO"]},{"nombre":"Nemocón","eses":["ESE HOSPITAL SAN VICENTE DE PAUL DE NEMOCON"]},{"nombre":"San Cayetano","eses":["ESE HOSPITAL UNIVERSITARIO DE LA SAMARITANA"]},{"nombre":"Sesquilé","eses":["ESE HOSPITAL SAN ANTONIO"]},{"nombre":"Tabio","eses":["ESE HOSPITAL NUESTRA SEÑORA DEL CARMEN DE TABIO"]},{"nombre":"Tenjo","eses":["E.S.E. HOSPITAL SANTA ROSA DE TENJO"]},{"nombre":"Zipaquirá","eses":["ESE HOSPITAL UNIVERSITARIO DE LA SAMARITANA"]}]},{"region":"Sabana Centro Occidente","municipios":[{"nombre":"Albán","eses":["E.S.E HOSPITAL SAN RAFAEL DE FACATATIVÁ"]},{"nombre":"Beltrán","eses":["E.S.E. HOSPITAL SAN VICENTE DE PAUL"]},{"nombre":"Bituima","eses":["E.S.E. HOSPITAL SAN VICENTE DE PAUL"]},{"nombre":"Bojacá","eses":["E.S.E. HOSPITAL SANTA MATILDE DE MADRID"]},{"nombre":"El Rosal","eses":["E.S.E. HOSPITAL SANTA MATILDE DE MADRID"]},{"nombre":"Facatativá","eses":["E.S.E HOSPITAL SAN RAFAEL DE FACATATIVÁ"]},{"nombre":"Funza","eses":["E.S.E. DEL ORDEN DEPARTAMENTAL HOSPITAL NUESTRA SEÑORA DE LAS MERCEDES DEL MUNICIPIO DE FUNZA"]},{"nombre":"Guayabal De Siquima","eses":["E.S.E HOSPITAL SAN RAFAEL DE FACATATIVÁ"]},{"nombre":"Madrid","eses":["E.S.E. HOSPITAL SANTA MATILDE DE MADRID"]},{"nombre":"Mosquera","eses":["HOSPITAL MARIA AUXILIADORA E.S.E. DEL MUNICIPIO DE MOSQUERA"]},{"nombre":"Pulí","eses":["E.S.E. HOSPITAL SAN VICENTE DE PAUL"]},{"nombre":"San Juan De Río Seco","eses":["E.S.E. HOSPITAL SAN VICENTE DE PAUL"]},{"nombre":"Subachoque","eses":["E.S.E HOSPITAL SAN RAFAEL DE FACATATIVÁ"]},{"nombre":"Vianí","eses":["E.S.E. MERCEDES TELLEZ DE PRADILLA (E.S.E.) HOSPITAL VIANI PRIMER NIVEL DE ATENCION"]},{"nombre":"Zipacón","eses":["E.S.E. HOSPITAL SANTA MATILDE DE MADRID"]}]},{"region":"Soacha","municipios":[{"nombre":"Granada","eses":["E.S.E. REGION DE SALUD SOACHA"]},{"nombre":"Sibaté","eses":["E.S.E. REGION DE SALUD SOACHA"]},{"nombre":"Soacha","eses":["E.S.E. E.S.E MUNICIPAL DE SOACHA JULIO CESAR PEÑALOZA","E.S.E. REGION DE SALUD SOACHA","HOSPITAL CARDIOVASCULAR DE CUNDINAMARCA S.A"]}]},{"region":"Sur","municipios":[{"nombre":"Arbeláez","eses":["E.S.E. HOSPITAL SAN ANTONIO DE ARBELAEZ"]},{"nombre":"Cabrera","eses":["E.S.E. HOSPITAL SAN ANTONIO DE ARBELAEZ"]},{"nombre":"Fusagasugá","eses":["E.S.E. HOSPITAL SAN RAFAEL DE FUSAGASUGA"]},{"nombre":"Pandi","eses":["E.S.E. HOSPITAL SAN ANTONIO DE ARBELAEZ"]},{"nombre":"Pasca","eses":["E.S.E. HOSPITAL SAN RAFAEL DE FUSAGASUGA"]},{"nombre":"San Bernardo","eses":["E.S.E. HOSPITAL SAN ANTONIO DE ARBELAEZ"]},{"nombre":"Silvania","eses":["HOSPITAL ISMAEL SILVA E.S.E."]},{"nombre":"Tibacuy","eses":["E.S.E. HOSPITAL SAN RAFAEL DE FUSAGASUGA"]},{"nombre":"Venecia","eses":["E.S.E. HOSPITAL SAN ANTONIO DE ARBELAEZ"]}]},{"region":"Suroccidente","municipios":[{"nombre":"Agua De Dios","eses":["SANATORIO DE AGUA DE DIOS E.S.E.","E.S.E. HOSPITAL MARCO FELIPE AFANADOR DE TOCAIMA"]},{"nombre":"Apulo","eses":["E.S.E. HOSPITAL MARCO FELIPE AFANADOR DE TOCAIMA"]},{"nombre":"Girardot","eses":["ESE HOSPITAL UNIVERSITARIO DE LA SAMARITANA","DUMIAN MEDICAL S.A.S"]},{"nombre":"Guataquí","eses":["ESE HOSPITAL UNIVERSITARIO DE LA SAMARITANA"]},{"nombre":"Jerusalén","eses":["E.S.E. HOSPITAL MARCO FELIPE AFANADOR DE TOCAIMA"]},{"nombre":"Nariño","eses":["ESE HOSPITAL UNIVERSITARIO DE LA SAMARITANA"]},{"nombre":"Nilo","eses":["DUMIAN MEDICAL S.A.S","ESE HOSPITAL UNIVERSITARIO DE LA SAMARITANA"]},{"nombre":"Ricaurte","eses":["E.S.E. CENTRO DE SALUD DE RICAURTE"]},{"nombre":"Tocaima","eses":["E.S.E. HOSPITAL MARCO FELIPE AFANADOR DE TOCAIMA"]},{"nombre":"Viotá","eses":["E.S.E. HOSPITAL SAN FRANCISCO DE VIOTA"]}]},{"region":"Suroriente","municipios":[{"nombre":"Caqueza","eses":["E.S.E. HOSPITAL SAN RAFAEL DE CAQUEZA"]},{"nombre":"Chipaque","eses":["E.S.E. HOSPITAL SAN RAFAEL DE CAQUEZA"]},{"nombre":"Choachí","eses":["E.S.E. HOSPITAL SAN VICENTE DE PAUL DE FOMEQUE"]},{"nombre":"Fomeque","eses":["E.S.E. HOSPITAL SAN VICENTE DE PAUL DE FOMEQUE"]},{"nombre":"Fosca","eses":["CENTRO DE SALUD DE FOSCA E.S.E."]},{"nombre":"Guayabetal","eses":["E.S.E. HOSPITAL SAN RAFAEL DE CAQUEZA"]},{"nombre":"Gutiérrez","eses":["E.S.E. HOSPITAL SAN RAFAEL DE CAQUEZA"]},{"nombre":"Quetame","eses":["E.S.E. HOSPITAL SAN RAFAEL DE CAQUEZA"]},{"nombre":"Ubaque","eses":["E.S.E. HOSPITAL SAN VICENTE DE PAUL DE FOMEQUE"]},{"nombre":"Une","eses":["E.S.E. CENTRO DE SALUD TIMOTEO RIVEROS CUBILLOS"]}]}];
+
+// ============================================================
+// PALANCAS APS
+// ============================================================
+const PALANCAS=[{id:6,nombre:"Modelos de Atención",esfera:1,icon:"🏥",desc:"Reorientar modelos hacia APS: atención integral, integrada y centrada en las personas",preguntas:["¿Existe un modelo de atención definido que incorpore servicios integrales (promocional, preventivo, curativo, rehabilitación)?","¿Se utilizan equipos multiprofesionales (médico, enfermera, trabajador social, farmacéutico)?","¿Existen listados/enlaces de población asignada a cada equipo de atención primaria?","¿Se garantiza la derivación oportuna y contrarreferencia desde atención primaria a servicios agudos/especializados?","¿Se implementa gestión y coordinación de casos en la comunidad?"]},{id:7,nombre:"Gobernanza de la Salud",esfera:2,icon:"⚖️",desc:"Autonomía local, marcos de políticas, participación comunitaria en decisiones",preguntas:["¿Existe descentralización de la autonomía en la toma de decisiones a nivel local?","¿Hay marcos de políticas y acuerdos de planificación conjunta que apoyen la integración de servicios?","¿Se incluyen comunidades y partes interesadas en la identificación de problemas y soluciones?","¿Existe garantía de calidad, seguimiento regular y ciclos de retroalimentación?","¿Hay liderazgo que fomente una cultura de equidad y rendición de cuentas?"]},{id:8,nombre:"Personal Sanitario",esfera:1,icon:"👨‍⚕️",desc:"Planificación estratégica, educación, reclutamiento, retención y equipos multiprofesionales",preguntas:["¿Existe planificación estratégica de la fuerza laboral basada en análisis del mercado laboral de salud?","¿Se cuenta con educación pre-servicio y formación continua de alta calidad adaptada a APS?","¿Se implementan estrategias de reclutamiento y retención con condiciones de trabajo atractivas?","¿Se abordan las desigualdades de género, antigüedad y remuneración del personal?","¿Se implementa el cambio de tareas (task-shifting) y equipos multiprofesionales?"]},{id:9,nombre:"Financiamiento",esfera:3,icon:"💰",desc:"Recaudación, mancomunación, asignación y compra estratégica para APS",preguntas:["¿Existe voluntad política y compromiso de financiamiento público suficiente para APS?","¿Se utilizan fondos comunes (pooling) para financiar APS y reducir pagos de bolsillo?","¿Se han definido paquetes integrales de beneficios alineados con financiamiento público?","¿Se utilizan métodos de pago a proveedores que incentiven APS (capitación, pago por desempeño)?","¿Se gestiona adecuadamente las finanzas públicas para flujo oportuno de recursos?"]},{id:10,nombre:"Medicamentos",esfera:1,icon:"💊",desc:"Acceso equitativo, uso racional, cadena de suministro y prescripción de calidad",preguntas:["¿Se garantiza acceso asequible a medicamentos esenciales con financiamiento público?","¿Se utiliza prescripción sistemática de genéricos y biosimilares?","¿Existe gestión de existencias y prácticas de adquisición eficientes?","¿Se coordina entre farmacias comunitarias y prescriptores?","¿Se involucra a pacientes y comunidades en alfabetización en medicamentos y autocuidado?"]},{id:11,nombre:"Tecnologías Sanitarias",esfera:1,icon:"🔬",desc:"Tecnología apropiada para diagnóstico temprano, autocuidado y coordinación",preguntas:["¿Se utiliza tecnología para identificación temprana de factores de riesgo y diagnóstico?","¿Existen sistemas de apoyo clínico y derivación que permitan compartir información entre niveles?","¿Se promueve el autocuidado con tecnología (dispositivos de monitoreo)?","¿Se capacita al personal y pacientes en uso de tecnologías sanitarias?","¿Se garantizan servicios de apoyo, gestión y mantenimiento de equipos?"]},{id:12,nombre:"Infraestructura",esfera:1,icon:"🏗️",desc:"WASH, edificios, equipos no médicos, electricidad, internet y mantenimiento",preguntas:["¿Se cumplen requisitos básicos de WASH (agua, saneamiento, higiene) y gestión de residuos?","¿La infraestructura considera necesidades médicas y no médicas de personas y comunidades?","¿Se planifica el patrón de demanda futura e innovación tecnológica en el diseño?","¿Se garantizan conexiones fiables de electricidad e internet?","¿Se contemplan costos de ciclo de vida y mantenimiento, no solo costos iniciales?"]},{id:13,nombre:"Sistemas de Información",esfera:1,icon:"💻",desc:"Registros electrónicos, identificador único, datos de calidad, interoperabilidad",preguntas:["¿Existen registros electrónicos de salud y un identificador único del paciente?","¿Se garantizan datos de alta calidad, fiables y seguros que se analizan y comparten?","¿Existen sistemas de datos interoperables con definiciones estandarizadas?","¿Se cuenta con disponibilidad oportuna de datos y recursos para entrada/gestión eficaz?","¿Se tienen en cuenta las desigualdades en la adopción y uso de soluciones digitales?"]}];
+const ESFERAS=[{id:1,nombre:"Servicios de Salud Integrados",color:"#0B4F9E",icon:"🏥"},{id:2,nombre:"Participación Comunitaria",color:"#0A8A3F",icon:"🤝"},{id:3,nombre:"Acción Multisectorial",color:"#FCE803",icon:"🌐"}];
+
+// ============================================================
+// GLOSARIO (30 términos)
+// ============================================================
+const GLOSARIO=[
+{term:"APS (Atención Primaria de Salud)",def:"Enfoque integral que abarca a toda la sociedad para la salud y el bienestar, basado en principios de equidad, derechos humanos y justicia social",concept:"Paradigma que integra servicios de salud, participación comunitaria y acción intersectorial",ejemplo:"Equipos de salud comunitaria que ofrecen promoción, prevención, curación y rehabilitación en un territorio",normatividad:"Declaración de Alma-Ata (1978), Declaración de Astaná (2018), Resolución OMS WHA62.12",aplicacion:"Base de la organización de sistemas de salud orientados a la cobertura universal",relacionAPS:"Es el concepto fundacional del enfoque APS"},
+{term:"RIAS (Redes Integradas de Servicios de Salud)",def:"Red de organizaciones que presta servicios equitativos e integrales de salud a una población definida, basada en un modelo de atención centrado en la persona",concept:"Organización de servicios de salud interconectados que garantiza continuidad en la atención",ejemplo:"Hospital de primer nivel coordinado con especialistas y servicios de apoyo diagnóstico",normatividad:"Resolución OMS WHA64.2, Ley 1438 de 2011 (Colombia), Decreto 4107 de 2011",aplicacion:"Organización de servicios por niveles de complejidad con referenciación y contrarreferenciación",relacionAPS:"Las RIAS son la forma operativa de implementar los servicios integrados de la APS"},
+{term:"RIISS",def:"Redes Integradas e Intersectoriales de Servicios de Salud, extendiendo el concepto de RIAS a sectores fuera del salud",concept:"Integración de servicios de salud con educación, vivienda, ambiente, desarrollo social",ejemplo:"Coordinación entre centro de salud, escuela y alcaldía para mejorar nutrición infantil",normatividad:"Política Nacional de Salud Pública (Colombia), Lineamientos OMS",aplicacion:"Mesas intersectoriales territoriales para abordar determinantes sociales",relacionAPS:"Implementa la tercera esfera de APS: acción intersectorial"},
+{term:"Promoción de la Salud",def:"Proceso que permite a las personas incrementar control sobre su salud para mejorarla",concept:"Estrategias educativas, ambientales y organizativas para empoderar a las personas",ejemplo:"Campañas de estilos de vida saludable, educación nutricional, actividad física",normatividad:"Carta de Ottawa (1986), Resolución OMS WHA51.12",aplicacion:"Programas comunitarios de educación para la salud",relacionAPS:"Componente central de la primera esfera de APS"},
+{term:"Prevención de Enfermedades",def:"Medidas para prevenir la aparición de enfermedades (primaria), detectarlas temprano (secundaria) o reducir complicaciones (terciaria)",concept:"Acciones dirigidas a evitar enfermedad o limitar su progreso",ejemplo:"Vacunación, tamizaje de cáncer, manejo de diabetes",normatividad:"Resolución OMS WHA60.17, Plan Nacional de Salud Pública",aplicacion:"Programas de vacunación, tamizaje y manejo de crónicos en atención primaria",relacionAPS:"Función esencial de los servicios integrados en APS"},
+{term:"Gobernanza de la Salud",def:"Conjunto de procesos y estructuras que guían la dirección y operación del sistema de salud",concept:"Marco institucional para toma de decisiones, rendición de cuentas y transparencia",ejemplo:"Consejos territoriales de salud con participación social",normatividad:"Ley 10 de 1990, Ley 1122 de 2007, Lineamientos OMS",aplicacion:"Consejos de salud con participación comunitaria en municipios",relacionAPS:"Asegura que las decisiones del sistema reflejen las necesidades de la comunidad"},
+{term:"Participación Social",def:"Proceso por el cual la comunidad se involucra en la planificación, implementación y evaluación de políticas y servicios de salud",concept:"Empoderamiento de ciudadanos como sujetos activos del sistema de salud",ejemplo:"Juntas de acción comunal participando en planes de salud locales",normatividad:"Ley 715 de 2001, Declaración de Alma-Ata (1978)",aplicacion:"Mesas de participación en salud, veedurías ciudadanas",relacionAPS:"Segunda esfera de APS: empoderamiento social"},
+{term:"Intersectorialidad",def:"Coordinación entre diferentes sectores (salud, educación, ambiente, vivienda, etc.) para abordar determinantes sociales de la salud",concept:"Trabajo articulado multisectorial para resolver problemas complejos",ejemplo:"Programa conjunto de salud-educación-desarrollo social para primera infancia",normatividad:"Política Nacional de Salud Pública, ODS 17 (alianzas)",aplicacion:"Mesas intersectoriales municipales para salud pública",relacionAPS:"Tercera esfera de APS: acción intersectorial"},
+{term:"Determinantes Sociales de la Salud",def:"Condiciones en que las personas nacen, crecen, viven, trabajan y envejecen, que influyen en su salud",concept:"Factores sociales, económicos y ambientales que afectan el estado de salud",ejemplo:"Relación entre nivel educativo y mortalidad infantil",normatividad:"Resolución OMS WHA62.14, Comisión sobre Determinantes Sociales",aplicacion:"Políticas de vivienda, educación, empleo como políticas de salud",relacionAPS:"La APS aborda estos determinantes mediante acción intersectorial"},
+{term:"Territorio",def:"Espacio geográfico y social donde viven las personas y donde se implementan acciones de salud pública",concept:"Delimitación geográfica con características sociales, culturales y ambientales propias",ejemplo:"Municipio de Fusagasugá con sus veredas y casco urbano",normatividad:"Ley 715 de 2001, Ley 1551 de 2012",aplicacion:"Plan de salud territorial basado en análisis de situación local",relacionAPS:"La APS se implementa en el territorio con enfoque poblacional"},
+{term:"Gestión del Riesgo en Salud",def:"Conjunto de acciones para identificar, prevenir y mitigar riesgos individuales y colectivos de salud",concept:"Estrategias para manejar riesgos epidemiológicos, ambientales y sanitarios",ejemplo:"Vigilancia de eventos de interés en salud pública",normatividad:"Decreto 1536 de 2012, Resolución 199 de 2015",aplicacion:"Planes de gestión del riesgo en hospitales y territorios",relacionAPS:"Función esencial de salud pública integrada en APS"},
+{term:"Salud Familiar",def:"Enfoque que considera a la familia como unidad de atención y análisis de salud",concept:"Abordaje de la salud desde la dinámica familiar, no solo individual",ejemplo:"Visita domiciliaria para evaluar entorno familiar y factores de riesgo",normatividad:"Lineamientos Ministerio de Salud, Estrategia de Salud Familiar (OMS)",aplicacion:"Historia clínica familiar en atención primaria",relacionAPS:"Estrategia operativa de la APS para aproximarse a las comunidades"},
+{term:"Salud Comunitaria",def:"Enfoque que promueve la salud de grupos y comunidades mediante participación y acción colectiva",concept:"Salud desde la perspectiva poblacional y comunitaria",ejemplo:"Promotores de salud que trabajan con líderes comunitarios",normatividad:"Ley 1122 de 2007, Estrategia APS (OMS)",aplicacion:"Programas de promoción liderados por la comunidad",relacionAPS:"Expresión de la segunda esfera: empoderamiento social"},
+{term:"Acceso",def:"Posibilidad de utilizar servicios de salud cuando se necesitan, sin barreras geográficas, económicas o culturales",concept:"Disponibilidad, accesibilidad, aceptabilidad y calidad de servicios",ejemplo:"Centro de salud a menos de 30 minutos de la vivienda",normatividad:"ODS 3.8, Resolución OMS WHA67.2",aplicacion:"Reducción de barreras de acceso a consulta de primer nivel",relacionAPS:"La APS busca garantizar acceso universal como puerta de entrada al sistema"},
+{term:"Continuidad",def:"Relación longitudinal entre paciente y equipo de salud a lo largo del tiempo",concept:"Seguimiento coherente y sostenido de las necesidades de salud",ejemplo:"Médico de familia que atiende al paciente durante años",normatividad:"Lineamientos OMS sobre APS",aplicacion:"Asignación de pacientes a un equipo de salud estable",relacionAPS:"Una de las 4C de Starfield, característica esencial de APS"},
+{term:"Integralidad",def:"Atención que aborda todas las necesidades de salud (físicas, mentales, sociales) en un continuo promocional-rehabilitador",concept:"Abordaje holístico de la salud, no fragmentado por enfermedad",ejemplo:"Equipo que atiende hipertensión, salud mental y prevención en una consulta",normatividad:"Ley 1438 de 2011, Resolución OMS",aplicacion:"Servicios integrados por ciclo de vida y condición",relacionAPS:"Una de las 4C de Starfield, núcleo de los servicios integrados"},
+{term:"Equidad",def:"Ausencia de diferencias injustas y evitables en salud entre grupos poblacionales",concept:"Justicia distributiva en salud: cada quien según su necesidad",ejemplo:"Reducción de brechas de mortalidad materna entre zonas rurales y urbanas",normatividad:"ODS 10, Constitución Política de Colombia Art. 49",aplicacion:"Programas focalizados en poblaciones vulnerables",relacionAPS:"Principio rector de la APS"},
+{term:"Universalidad",def:"Cobertura de salud para todas las personas sin discriminación",concept:"Todas las personas tienen acceso a servicios esenciales de salud",ejemplo:"Régimen subsidiado y contributivo en Colombia",normatividad:"ODS 3.8, Ley 100 de 1993",aplicacion:"Cobertura universal de aseguramiento en salud",relacionAPS:"Meta final de la APS: cobertura sanitaria universal"},
+{term:"Curso de Vida",def:"Enfoque que reconoce que la salud se acumula a lo largo de la vida desde la concepción hasta la vejez",concept:"Perspectiva temporal del desarrollo humano y su impacto en salud",ejemplo:"Atención prenatal, crecimiento y desarrollo, adulto mayor",normatividad:"Resolución OMS WHA67.14",aplicacion:"Programas por etapas de vida en atención primaria",relacionAPS:"La APS organiza servicios por ciclo de vida"},
+{term:"Enfoque Diferencial",def:"Reconocimiento de que diferentes grupos (étnicos, de género, edad, discapacidad) tienen necesidades distintas",concept:"Ajuste de servicios a características específicas de poblaciones",ejemplo:"Servicios de salud con pertinencia cultural para indígenas",normatividad:"Autoconstitutional Court rulings, Ley 762 de 2002",aplicacion:"Servicios diferenciados para grupos étnicos y poblaciones vulnerables",relacionAPS:"Garantiza que la APS sea equitativa e inclusiva"},
+{term:"Enfoque Territorial",def:"Organización de servicios de salud según las dinámicas geográficas, sociales y epidemiológicas del territorio",concept:"Adaptación de la atención a las características del territorio",ejemplo:"Hospital rural con estrategia de extensión de cobertura a veredas",normatividad:"Ley 715 de 2001, Lineamientos MSPS",aplicacion:"Planes de salud territoriales con análisis de situación local",relacionAPS:"La APS se ancla en el territorio y sus comunidades"},
+{term:"Atención Integrada",def:"Servicios de salud coordinados entre niveles, sectores y tiempo para ofrecer atención continua",concept:"Articulación de servicios para evitar fragmentación",ejemplo:"Referencia y contrarreferencia entre primer y segundo nivel",normatividad:"Decreto 4107 de 2011, RIAS (OMS)",aplicacion:"Rutas integradas de atención en salud (RIAS)",relacionAPS:"Expresión operativa de los servicios integrados de APS"},
+{term:"Astaná (2018)",def:"Declaración de la Conferencia Internacional sobre APS (Astaná, Kazajstán, 2018) que renueva los compromisos de Alma-Ata",concept:"Reafirmación de APS como clave para cobertura universal y ODS",ejemplo:"Compromiso de los países de fortalecer APS como base del sistema de salud",normatividad:"Declaración de Astaná sobre APS (OMS 2018)",aplicacion:"Reformas nacionales orientadas a APS",relacionAPS:"Marco político internacional más importante para APS en la actualidad"},
+{term:"Alma-Ata (1978)",def:"Declaración de la Conferencia Internacional sobre APS (Alma-Ata, Kazajstán, 1978) que definió APS por primera vez",concept:"Documento fundacional del concepto de APS y Salud para Todos",ejemplo:"Meta de Salud para Todos en el año 2000",normatividad:"Declaración de Alma-Ata (OMS 1978)",aplicacion:"Base histórica de todas las reformas de APS",relacionAPS:"Origen del concepto y movimiento de APS"},
+{term:"ODS (Objetivos de Desarrollo Sostenible)",def:"17 objetivos globales adoptados por Naciones Unidas en 2015 para erradicar pobreza, proteger el planeta y asegurar prosperidad",concept:"Agenda 2030 para el desarrollo sostenible",ejemplo:"ODS 3: Salud y bienestar; ODS 10: Reducción de desigualdades",normatividad:"Resolución ONU A/RES/70/1 (2015)",aplicacion:"Planes nacionales alineados con ODS",relacionAPS:"La APS contribuye directamente a ODS 3 y transversalmente a otros ODS"},
+{term:"Cobertura Universal en Salud",def:"Garantía de que todas las personas obtengan los servicios de salud que necesitan sin sufrir dificultades financieras",concept:"Acceso universal + protección financiera",ejemplo:"Sistema de aseguramiento con plan de beneficios esencial",normatividad:"Resolución OMS WHA67.14, ODS 3.8",aplicacion:"Ampliación de planes de beneficios y reducción de pagos de bolsillo",relacionAPS:"La APS es la estrategia principal para alcanzar cobertura universal"},
+{term:"Atención Primaria",def:"Primer nivel de contacto de la población con el sistema de salud, componente central pero no único de la APS",concept:"Servicio de primer contacto, continuo, integral y coordinado",ejemplo:"Consulta de medicina general en centro de salud",normatividad:"Definición de Starfield (1994), OMS",aplicacion:"Servicios de primer nivel en hospitales y centros de salud",relacionAPS:"Componente central de la APS, pero no se debe confundir con APS"},
+{term:"Coordinación",def:"Articulación coherente entre servicios de salud para asegurar continuidad en la atención del paciente",concept:"Gestión que evita fragmentación y duplicidad en la atención",ejemplo:"Médico de familia que coordina derivaciones a especialistas",normatividad:"Lineamientos OMS sobre APS",aplicacion:"Sistemas de referencia y contrarreferencia, médicos coordinadores",relacionAPS:"Una de las 4C de Starfield, característica esencial de APS"},
+{term:"Empoderamiento Social",def:"Proceso por el cual las comunidades adquieren control sobre los determinantes de su salud",concept:"Fortalecimiento de capacidades individuales y colectivas para gestión de la salud",ejemplo:"Capacitación a líderes comunitarios en promoción de salud",normatividad:"Carta de Ottawa (1986), Declaración de Astaná (2018)",aplicacion:"Escuelas de salud y formación de líderes comunitarios",relacionAPS:"Tercera esfera de APS: empoderamiento social"},
+{term:"Calidad en Salud",def:"Grado en que los servicios de salud aumentan la probabilidad de resultados deseados y son consistentes con conocimientos profesionales actuales",concept:"Atributos: eficacia, seguridad, eficiencia, oportunidad, accesibilidad, pertinencia",ejemplo:"Adopción de guías de práctica clínica basadas en evidencia",normatividad:"Resolución 256 de 2016 (Colombia), OMS",aplicacion:"Sistemas de garantía de calidad en hospitales",relacionAPS:"La calidad es un atributo transversal de los servicios integrados en APS"}
+];
+
+// ============================================================
+// CASOS DE PAÍS
+// ============================================================
+const CASOS_PAIS=[
+{pais:"Brasil",flag:"🇧🇷",contexto:"Sistema único de salud (SUS) con 210M habitantes",problema:"Acceso desigual a servicios de salud en zonas rurales y favelas",estrategia:"Programa Saúde da Família con equipos multidisciplinarios comunitarios",resultados:"Cobertura de APS al 63%, reducción de mortalidad infantil",indicadores:"Cobertura APS, hospitalizaciones evitables, satisfacción",factoresExito:"Liderazgo político, financiamiento sostenido, participación comunitaria",lecciones:"Inversión sostenida en APS produce mejoras a largo plazo",referencias:"Ministerio da Saúde Brasil, OMS 2024",aplicabilidadColombia:"Modelo de equipos comunitarios aplicable a zonas rurales de Cundinamarca"},
+{pais:"Costa Rica",flag:"🇨🇷",contexto:"Sistema de salud con CCSS, 5M habitantes",problema:"Necesidad de fortalecer primer nivel de atención",estrategia:"Equipos Básicos de Atención Integral de Salud (EBAIS)",resultados:"Esperanza de vida 80 años, cobertura universal",indicadores:"Cobertura EBAIS, mortalidad infantil, esperanza de vida",factoresExito:"Inversión sostenida, formación de recursos humanos",lecciones:"APS como base del sistema garantiza equidad y eficiencia",referencias:"CCSS, OMS 2024",aplicabilidadColombia:"Modelo EBAIS replicable en municipios pequeños de Cundinamarca"},
+{pais:"Tailandia",flag:"🇹🇭",contexto:"Sistema de salud universal con 70M habitantes",problema:"Acceso financiero a servicios de salud",estrategia:"Esquema de 30 baht por consulta + red de APS comunitaria",resultados:"Cobertura universal, reducción de pobreza por gastos de salud",indicadores:"Cobertura universal, gasto de bolsillo, satisfacción",factoresExito:"Voluntad política, financiamiento público, infraestructura rural",lecciones:"Financiamiento innovador permite cobertura universal",referencias:"Ministerio de Salud Tailandia, OMS",aplicabilidadColombia:"Esquema de copago accesible aplicable a poblaciones vulnerables"},
+{pais:"España",flag:"🇪🇸",contexto:"Sistema Nacional de Salud descentralizado, 47M habitantes",problema:"Fragmentación por autonomías regionales",estrategia:"Modelo de medicina de familia y atención primaria centrada en AP",resultados:"Una de las mejores esperanzas de vida del mundo",indicadores:"Médicos de familia por habitante, hospitalizaciones evitables",factoresExito:"Formación médica especializada, infraestructura comunitaria",lecciones:"Inversión en médicos de familia es clave para APS",referencias:"Ministerio de Salud España, OMS",aplicabilidadColombia:"Modelo de medicina familiar aplicable a Cundinamarca con formación MIR"},
+{pais:"Reino Unido",flag:"🇬🇧",contexto:"National Health Service (NHS), 67M habitantes",problema:"Presión sobre servicios hospitalarios y costos crecientes",estrategia:"GP partnerships como base de atención primaria",resultados:"Acceso universal con puerta de entrada por AP",indicadores:"GP por habitante, hospitalizaciones evitables, satisfacción",factoresExito:"Sistema de gatekeeping, pago por capitación",lecciones:"APS con gatekeeping reduce costos y mejora calidad",referencias:"NHS, OMS 2024",aplicabilidadColombia:"Modelo de gatekeeping adaptable al sistema colombiano"},
+{pais:"Canadá",flag:"🇨🇦",contexto:"Sistema de salud provincial, 38M habitantes",problema:"Atención a poblaciones indígenas y remotas",estrategia:"Modelos de APS culturalmente apropiados para indígenas",resultados:"Mejora de indicadores en comunidades indígenas",indicadores:"Acceso, equidad, pertinencia cultural",factoresExito:"Enfoque diferencial, participación comunitaria",lecciones:"APS debe adaptarse culturalmente a poblaciones específicas",referencias:"Health Canada, OMS",aplicabilidadColombia:"Enfoque diferencial para poblaciones indígenas y afro de Cundinamarca"},
+{pais:"Dinamarca",flag:"🇩🇰",contexto:"Sistema de salud digitalizado, 5.8M habitantes",problema:"Fragmentación de información entre niveles",estrategia:"Registros electrónicos de salud nacionales interoperables",resultados:"Líder mundial en salud digital e interoperabilidad",indicadores:"Adopción EHR, intercambio de datos, satisfacción",factoresExito:"Inversión en digitalización, estándares de datos",lecciones:"Digitalización es habilitador clave de APS",referencias:"Danish Health Authority, OMS 2024",aplicabilidadColombia:"Modelo de interoperabilidad para sistemas de información de Cundinamarca"},
+{pais:"Estonia",flag:"🇪🇪",contexto:"Sistema digital pionero, 1.3M habitantes",problema:"Necesidad de sistema de salud moderno post-soviético",estrategia:"Registro electrónico nacional integrado con e-health",resultados:"95% de recetas médicas electrónicas",indicadores:"Adopción digital, eficiencia, acceso",factoresExito:"Inversión tecnológica, identificación digital nacional",lecciones:"Identificación única del paciente facilita continuidad",referencias:"Ministry of Social Affairs Estonia, OMS",aplicabilidadColombia:"Modelo de identificación única para historias clínicas en Cundinamarca"},
+{pais:"Cuba",flag:"🇨🇺",contexto:"Sistema de salud público universal, 11M habitantes",problema:"Necesidad de cobertura en zonas rurales",estrategia:"Médico de familia en cada barrio/vereda",resultados:"Esperanza de vida 79 años, bajos índices de mortalidad infantil",indicadores:"Médicos por habitante, cobertura, mortalidad infantil",factoresExito:"Formación masiva de médicos, enfoque preventivo",lecciones:"APS basada en médico de familia es altamente efectiva",referencias:"MINSAP Cuba, OMS",aplicabilidadColombia:"Modelo de médico de familia aplicable a veredas de Cundinamarca"},
+{pais:"Países Bajos",flag:"🇳🇱",contexto:"Sistema de salud con aseguramiento privado regulado, 17M habitantes",problema:"Gestión de enfermedades crónicas en población envejecida",estrategia:"Modelos de atención integrada con enfermeras de familia",resultados:"Reducción de hospitalizaciones por crónicos",indicadores:"Hospitalizaciones evitables, gestión de crónicos",factoresExito:"Equipos multidisciplinarios, protocolos de crónicos",lecciones:"APS centrada en crónicos reduce carga hospitalaria",referencias:"Dutch Ministry of Health, OMS",aplicabilidadColombia:"Modelo de gestión de crónicos para ESE de Cundinamarca"},
+{pais:"Finlandia",flag:"🇫🇮",contexto:"Sistema de salud municipal, 5.5M habitantes",problema:"Desigualdades entre municipios",estrategia:"Centros de salud municipales con equipos multiprofesionales",resultados:"Cobertura universal con centros de salud locales",indicadores:"Acceso, equidad, satisfacción",factoresExito:"Descentralización, financiamiento municipal",lecciones:"Descentralización con financiamiento adecuado mejora equidad",referencias:"Finnish Ministry of Health, OMS",aplicabilidadColombia:"Modelo de centros municipales para municipios pequeños"},
+{pais:"Portugal",flag:"🇵🇹",contexto:"Sistema de salud público, 10M habitantes",problema:"Acceso desigual tras democratización",estrategia:"USF (Unidades de Saúde Familiares) con equipos multidisciplinarios",resultados:"Mejora significativa de indicadores de salud",indicadores:"Cobertura USF, satisfacción, mortalidad infantil",factoresExito:"Inversión en equipos de familia, incentivación por desempeño",lecciones:"Equipos de familia con incentivos mejoran calidad",referencias:"Portuguese Ministry of Health, OMS",aplicabilidadColombia:"Modelo de USF para fortalecer equipos de APS"},
+{pais:"México",flag:"🇲🇽",contexto:"Sistema de salud segmentado, 126M habitantes",problema:"Desigualdad de acceso entre poblaciones",estrategia:"Seguro Popular y expansión de APS comunitaria",resultados:"Cobertura ampliada a poblaciones no aseguradas",indicadores:"Cobertura, gasto de bolsillo, equidad",factoresExito:"Expansión de aseguramiento, centros de salud",lecciones:"Expansión de cobertura requiere financiamiento sostenido",referencias:"Mexican Ministry of Health, OMS",aplicabilidadColombia:"Estrategia de expansión de cobertura para poblaciones rurales"},
+{pais:"Chile",flag:"🇨🇱",contexto:"Sistema de salud con aseguramiento público/privado, 19M habitantes",problema:"Desigualdad entre sistema público y privado",estrategia:"CESFAM (Centros de Salud Familiar) con enfoque de APS",resultados:"Mejora de indicadores de salud pública",indicadores:"Cobertura CESFAM, acceso, equidad",factoresExito:"Inversión en APS, participación social",lecciones:"APS fortalecida reduce brechas de equidad",referencias:"Chilean Ministry of Health, OMS",aplicabilidadColombia:"Modelo CESFAM para fortalecer centros de salud familiar"},
+{pais:"Australia",flag:"🇦🇺",contexto:"Sistema de salud universal con Medicare, 26M habitantes",problema:"Atención a poblaciones rurales e indígenas",estrategia:"GP-led primary care con servicios de extensión rural",resultados:"Cobertura universal con puerta de entrada por GP",indicadores:"GP por habitante, acceso rural, equidad",factoresExito:"Gatekeeping, financiamiento por Medicare",lecciones:"APS con gatekeeping y financiamiento público funciona",referencias:"Australian Department of Health, OMS",aplicabilidadColombia:"Modelo de extensión rural para municipios lejanos"},
+{pais:"Suecia",flag:"🇸🇪",contexto:"Sistema de salud descentralizado, 10M habitantes",problema:"Necesidad de calidad y eficiencia",estrategia:"Centros de salud (vårdcentral) con equipos multiprofesionales",resultados:"Alta calidad y esperanza de vida",indicadores:"Calidad, acceso, eficiencia",factoresExito:"Descentralización, inversión en calidad",lecciones:"Calidad requiere inversión sostenida en equipos",referencias:"Swedish Ministry of Health, OMS",aplicabilidadColombia:"Modelo de centros de salud para municipios medianos"},
+{pais:"Argentina",flag:"🇦🇷",contexto:"Sistema federal de salud, 45M habitantes",problema:"Fragmentación entre sistemas provinciales",estrategia:"Programa de APS con agentes comunitarios",resultados:"Cobertura de APS en zonas vulnerables",indicadores:"Cobertura APS, equidad, acceso",factoresExito:"Agentes comunitarios, participación social",lecciones:"Agentes comunitarios son clave para APS en contextos complejos",referencias:"Argentine Ministry of Health, OMS",aplicabilidadColombia:"Agentes comunitarios para zonas vulnerables"},
+{pais:"Panamá",flag:"🇵🇦",contexto:"Sistema de salud con Caja de Seguro Social, 4M habitantes",problema:"Brechas de equidad entre zonas urbanas y rurales",estrategia:"MINSAP-CAPACI con extensión de APS a comarcas indígenas",resultados:"Mejora de acceso en comarcas",indicadores:"Acceso rural, equidad indígena",factoresExito:"Enfoque intercultural, inversión en zonas remotas",lecciones:"APS con pertinencia cultural mejora equidad",referencias:"MINSA Panamá, OMS",aplicabilidadColombia:"Enfoque intercultural para poblaciones indígenas"},
+{pais:"India",flag:"🇮🇳",contexto:"Sistema de salud con 1.4B habitantes, retos de cobertura rural",problema:"Mortalidad materno-infantil en zonas rurales",estrategia:"ASHA (Accredited Social Health Activists) trabajadoras comunitarias",resultados:"Reducción de mortalidad materno-infantil",indicadores:"Cobertura ASHA, mortalidad materna, inmunización",factoresExito:"Agentes comunitarias, conexión con sistema formal",lecciones:"Trabajadoras comunitarias son puente clave APS-comunidad",referencias:"Ministry of Health India, OMS",aplicabilidadColombia:"Modelo de promotoras comunitarias para veredas"},
+{pais:"Ruanda",flag:"🇷🇼",contexto:"Sistema de salud posconflicto, 13M habitantes",problema:"Baja cobertura y alta mortalidad post-genocidio",estrategia:"Mutuelles de santé + CHWs (Community Health Workers)",resultados:"Cobertura universal con APS comunitaria",indicadores:"Cobertura, mortalidad materno-infantil, equidad",factoresExito:"Voluntad política, CHWs, financiamiento comunitario",lecciones:"APS comunitaria con CHWs transforma sistemas de salud",referencias:"Ministry of Health Rwanda, OMS",aplicabilidadColombia:"Modelo de CHWs para zonas rurales de Cundinamarca"}
+];
+
+// ============================================================
+// EDUCATION CONTENT (3 Esferas + Astaná)
+// ============================================================
+const EDUCATION={
+esferas:[
+{num:1,nombre:"Servicios Integrados de Salud",color:"#0B4F9E",icon:"🏥",definicion:"Conjunto de servicios de salud que abarcan promoción, prevención, diagnóstico, tratamiento, rehabilitación y cuidados paliativos, coordinados entre niveles de atención y a lo largo del ciclo de vida.",objetivos:["Garantizar atención integral centrada en la persona","Reducir fragmentación de servicios","Asegurar continuidad en el continuum promocional-rehabilitador","Optimizar el uso de recursos del sistema de salud"],ejemplos:["Equipos de APS que atienden hipertensión, diabetes, salud mental y prevención en una consulta","Servicios de referencia y contrarreferencia entre hospital de primer nivel y especialista","Rutas integradas de atención en salud (RIAS) para cáncer, maternal, infancia"],aplicacionTerritorial:"En Cundinamarca, los hospitales de primer nivel (ESE) actúan como puerta de entrada al sistema, coordinando servicios con hospitales de segundo y tercer nivel mediante planes territoriales de salud.",ejemplosColombia:["Modelo de atención integral en salud (MAITE) del Ministerio de Salud","Rutas integradas de atención (RIAS) adoptadas por ESE de Cundinamarca","Equipos de salud familiar en hospitales municipales"],beneficios:["Mejor calidad de atención","Reducción de hospitalizaciones evitables","Mayor satisfacción del usuario","Uso más eficiente de recursos","Mejores resultados en salud de la población"]},
+{num:2,nombre:"Acción Intersectorial",color:"#0A8A3F",icon:"🌐",definicion:"Coordinación entre sectores más allá del salud (educación, ambiente, agua, vivienda, agricultura, movilidad, empleo, desarrollo social) para abordar los determinantes sociales de la salud.",objetivos:["Abordar determinantes sociales que afectan la salud","Reducir inequidades en salud","Potenciar el impacto de políticas públicas en salud","Crear sinergias entre sectores para bienestar"],sectores:["📚 Educación: escuelas saludables, educación nutricional","🌱 Ambiente: calidad del aire, gestión de residuos","💧 Agua: acceso a agua potable y saneamiento","🏠 Vivienda: condiciones habitacionales saludables","🌾 Agricultura: seguridad alimentaria y nutrición","🚌 Movilidad: transporte público seguro y activo","💼 Empleo: trabajo decente y salud ocupacional","👨‍👩‍👧 Desarrollo social: protección social comunitaria"],aplicacionTerritorial:"Mesas intersectoriales municipales en Cundinamarca que coordinan salud con educación, alcaldía, ICBF, etc. para programas de primera infancia, nutrición escolar, salud ambiental.",ejemplosColombia:["Programa De Cero a Siempre (primera infancia intersectorial)","Plan de Seguridad Alimentaria y Nutricional municipal","Mesas de salud ambiental con Corporación Autónoma Regional (CAR)"],beneficios:["Impacto en determinantes sociales de la salud","Reducción de inequidades","Mayor impacto con mismos recursos","Sostenibilidad de políticas de salud"]},
+{num:3,nombre:"Empoderamiento Social",color:"#b8860b",icon:"🤝",definicion:"Proceso por el cual las personas y comunidades adquieren control sobre las decisiones, recursos y políticas que afectan su salud, fortaleciendo su capacidad de acción colectiva.",objetivos:["Fortalecer la participación ciudadana en salud","Empoderar comunidades para autocuidado","Generar veeduría y control social","Construir capital social y comunitario"],mecanismos:["Participación social en consejos de salud","Organizaciones comunitarias y juntas de acción comunal","Asociaciones de usuarios y pacientes","Líderes sociales como enlaces APS-comunidad","Control ciudadano y veedurías"],aplicacionTerritorial:"En Cundinamarca, los Consejos Territoriales de Salud y las juntas de acción comunal son los espacios donde las comunidades participan en la gobernanza del sistema de salud municipal.",ejemplosColombia:["Consejos Territoriales de Salud (Ley 715)","Veedurías ciudadanas en salud","Asociaciones de pacientes crónicos","Escuelas de líderes en salud comunitaria"],beneficios:["Mayor apropiación de políticas de salud","Mejor diseño de servicios según necesidades locales","Transparencia y rendición de cuentas","Sostenibilidad social del sistema de salud"]}
+],
+astana:{
+titulo:"Declaración de Astaná (2018)",
+subtitulo:"Conferencia Internacional sobre Atención Primaria de Salud, Astaná, Kazajstán, 25-26 de octubre de 2018",
+antecedentes:["1978: Conferencia de Alma-Ata define APS y meta 'Salud para Todos en el año 2000'","1980s-2000s: Avances parciales pero APS no se implementa plenamente","2000s: Objetivos de Desarrollo del Milenio priorizan salud materno-infantil","2015: Objetivos de Desarrollo Sostenible (ODS) reafirman APS como clave","2018: Astaná renueva compromisos de APS a 40 años de Alma-Ata"],
+principios:["Derecho a la salud como derecho humano fundamental","Equidad y solidaridad","Participación social y empoderamiento comunitario","Integralidad e intersectorialidad","Calidad y seguridad en la atención"],
+objetivos:["Fortalecer la APS como base de sistemas de salud universales","Avanzar hacia la cobertura sanitaria universal (CSU)","Lograr los Objetivos de Desarrollo Sostenible (ODS)","Mejorar la salud y el bienestar de todas las personas"],
+compromisos:["Invertir en APS y recursos humanos","Desarrollar políticas intersectoriales","Fortalecer gobernanza y participación social","Implementar modelos de atención integrados","Generar evidencia e innovación en APS"],
+importanciaMundial:"Reafirma la APS como la estrategia más inclusiva, eficiente y costo-efectiva para mejorar la salud de las poblaciones y alcanzar la cobertura sanitaria universal.",
+importanciaColombia:"Colombia suscribió la Declaración de Astaná, comprometiéndose a fortalecer su sistema de salud con enfoque de APS. La Ley 1438 de 2011 (RIAS) y los modelos de atención integral son expresión de este compromiso.",
+relaciones:{
+aps:"La Declaración de Astaná reafirma la APS como enfoque central para organizar sistemas de salud",
+rias:"Impulsa la implementación de Redes Integradas de Servicios de Salud como expresión operativa de APS",
+gobernanza:"Exige gobernanza participativa con involucramiento de comunidades en decisiones de salud",
+participacionSocial:"Reconoce la participación social y el empoderamiento comunitario como pilares de la APS",
+determinantes:"Aborda los determinantes sociales de la salud mediante acción intersectorial",
+csu:"La APS es la vía principal para alcanzar la Cobertura Sanitaria Universal (CSU)"
+}
+}
+};
+
+// ============================================================
+// STATE
+// ============================================================
+let DB={usuarios:[],registros:[],acciones:[],auditoria:[],sessions:[]};
+try{DB=JSON.parse(localStorage.getItem('aps_cundi_v2')||'{"usuarios":[],"registros":[],"acciones":[],"auditoria":[],"sessions":[]}');}catch(e){DB={usuarios:[],registros:[],acciones:[],auditoria:[],sessions:[]};}
+let currentUser=null;
+let formRespuestas={};
+let editId=null;
+
+// Default users
+if(!DB.usuarios.find(u=>u.email==='admin@aps.gov.co')){
+DB.usuarios.push({id:'U1',email:'admin@aps.gov.co',password:'admin123',nombre:'Administrador APS',role:'admin',ese:'',region:'',cargo:'Super Administrador',telefono:'',estado:'activo',fechaReg:new Date().toISOString(),sessions:[]});
+DB.usuarios.push({id:'U2',email:'evaluador@aps.gov.co',password:'eval123',nombre:'Carlos Evaluador',role:'evaluador',ese:'E.S.E. HOSPITAL SAN RAFAEL DE FUSAGASUGA',region:'Sur',cargo:'Coordinador APS',telefono:'310 000 0000',estado:'activo',fechaReg:new Date().toISOString(),sessions:[]});
+saveDB();
+}
+
+// ============================================================
+// UTILITIES
+// ============================================================
+function saveDB(){try{localStorage.setItem('aps_cundi_v2',JSON.stringify(DB));}catch(e){console.warn('saveDB error:',e);}}
+function logAudit(usuario,accion,detalle){DB.auditoria.push({fecha:new Date().toLocaleDateString('es-CO'),hora:new Date().toLocaleTimeString('es-CO'),usuario,accion,detalle});saveDB();}
+function toast(msg,err){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(err?' error':'');setTimeout(()=>t.classList.remove('show'),2500);}
+function getScore(reg){if(!reg||!reg.respuestas)return 0;let s=0,c=0;for(let k in reg.respuestas){s+=reg.respuestas[k];c++;}return c>0?s/c:0;}
+function getPalancaScore(reg,palancaId){if(!reg||!reg.respuestas)return 0;let s=0,c=0;PALANCAS.forEach(p=>{if(p.id===palancaId){p.preguntas.forEach((q,i)=>{const k=p.id+'_'+i;if(reg.respuestas[k]){s+=reg.respuestas[k];c++;}});}});return c>0?s/c:0;}
+function pct(score){return Math.round((score/5)*100);}
+function semaforo(p){if(p>=80)return'green';if(p>=40)return'yellow';return'red';}
+function semaforoColor(p){const s=semaforo(p);return s==='green'?'#0A8A3F':s==='yellow'?'#facc15':'#C8102E';}
+function genId(){return'D'+Date.now().toString(36).toUpperCase();}
+
+// ============================================================
+// LANDING & LOGIN
+// ============================================================
+function showLogin(){
+document.getElementById('landing-page').style.display='none';
+document.getElementById('login-page').style.display='flex';
+document.getElementById('login-email').focus();
+}
+function showRecovery(){
+const modal=document.getElementById('modal');
+document.getElementById('modal-content').innerHTML=`<h2>📧 Recuperación de Contraseña</h2>
+<p style="margin-bottom:1rem;color:var(--gray);font-size:.85rem">Para recuperar su acceso, contacte al Equipo Técnico:</p>
+<div style="background:#f0f4f8;border-radius:8px;padding:1rem;margin-bottom:1rem">
+<p style="font-size:.85rem"><b>📧 Correo:</b> admin@aps.gov.co</p>
+<p style="font-size:.85rem"><b>📱 Teléfono:</b> Solicitar al equipo técnico</p>
+<p style="font-size:.85rem;margin-top:.5rem">El administrador puede restablecer su contraseña desde <b>⚙️ Configuración → Gestión de Usuarios y Contraseñas</b></p>
+</div>
+<p style="font-size:.82rem;color:var(--gray)">Si ya tiene su usuario y contraseña temporal, ingrese directamente en el formulario de inicio de sesión.</p>
+<div style="margin-top:1rem"><button class="btn btn-accent" onclick="closeModal()">Cerrar</button></div>`;
+modal.classList.add('show');
+}
+function showRegister(){
+const modal=document.getElementById('modal');
+document.getElementById('modal-content').innerHTML=`<h2>📝 Solicitud de Acceso</h2><p style="margin-bottom:1rem;color:var(--gray);font-size:.85rem">Complete el formulario. El Equipo Técnico revisará y aprobará su solicitud.</p>
+<div class="form-grid">
+<div class="form-group"><label>Nombre completo *</label><input type="text" id="reg-nombre"></div>
+<div class="form-group"><label>Correo institucional *</label><input type="email" id="reg-email"></div>
+<div class="form-group"><label>Cargo *</label><input type="text" id="reg-cargo"></div>
+<div class="form-group"><label>Teléfono</label><input type="tel" id="reg-tel"></div>
+<div class="form-group"><label>Región de Salud *</label><select id="reg-region" onchange="updateRegMuni()"><option value="">--</option></select></div>
+<div class="form-group"><label>Municipio *</label><select id="reg-municipio" disabled onchange="updateRegEse()"><option value="">-- Seleccione --</option></select></div>
+<div class="form-group"><label>Hospital/ESE *</label><select id="reg-ese" disabled><option value="">--</option></select></div>
+</div>
+<div style="margin-top:1rem"><button class="btn btn-accent" onclick="submitRegister()">Enviar Solicitud</button></div>`;
+// Fill regions
+const sel=document.getElementById('reg-region');HIERARCHY.forEach(r=>{const o=document.createElement('option');o.value=r.region;o.textContent=r.region;sel.appendChild(o);});
+modal.classList.add('show');
+}
+function updateRegMuni(){
+const reg=document.getElementById('reg-region').value;
+const selM=document.getElementById('reg-municipio');const selE=document.getElementById('reg-ese');
+selM.innerHTML='<option value="">--</option>';selE.innerHTML='<option value="">--</option>';selE.disabled=true;
+if(reg){const r=HIERARCHY.find(x=>x.region===reg);r.municipios.forEach(m=>{const o=document.createElement('option');o.value=m.nombre;o.textContent=m.nombre;selM.appendChild(o);});selM.disabled=false;}else{selM.disabled=true;}
+}
+function updateRegEse(){
+const reg=document.getElementById('reg-region').value;const mun=document.getElementById('reg-municipio').value;
+const selE=document.getElementById('reg-ese');selE.innerHTML='<option value="">--</option>';
+if(reg&&mun){const r=HIERARCHY.find(x=>x.region===reg);const m=r.municipios.find(x=>x.nombre===mun);m.eses.forEach(e=>{const o=document.createElement('option');o.value=e;o.textContent=e;selE.appendChild(o);});selE.disabled=false;}else{selE.disabled=true;}
+}
+// Register form municipio uses inline onchange="updateRegEse()" — no addEventListener needed
+document.addEventListener('DOMContentLoaded',function(){
+initDemoData();
+});
+
+function submitRegister(){
+const nombre=document.getElementById('reg-nombre').value;
+const email=document.getElementById('reg-email').value;
+const cargo=document.getElementById('reg-cargo').value;
+const tel=document.getElementById('reg-tel').value;
+const region=document.getElementById('reg-region').value;
+const municipio=document.getElementById('reg-municipio').value;
+const ese=document.getElementById('reg-ese').value;
+if(!nombre||!email||!cargo||!region||!municipio||!ese){toast('⚠️ Complete campos obligatorios',true);return;}
+if(DB.usuarios.find(u=>u.email===email)){toast('⚠️ Ya existe una solicitud con este correo',true);return;}
+const tempPass=Math.random().toString(36).substring(2,8).toUpperCase();
+DB.usuarios.push({id:genId(),email,password:tempPass,nombre,role:'evaluador',ese,region,cargo,telefono:tel,estado:'pendiente',fechaReg:new Date().toISOString(),sessions:[]});
+saveDB();
+logAudit(email,'Solicitud de acceso',ese);
+closeModal();
+toast('✅ Solicitud enviada. Pendiente aprobación del Equipo Técnico. Contraseña temporal: '+tempPass);
+}
+
+function doLogin(){
+const email=document.getElementById('login-email').value.trim();
+const pass=document.getElementById('login-pass').value;
+const err=document.getElementById('login-error');
+err.classList.remove('show');
+const user=DB.usuarios.find(u=>u.email===email);
+if(!user){showLoginError('Usuario no encontrado');return;}
+if(user.password!==pass){showLoginError('Contraseña incorrecta');return;}
+if(user.estado==='pendiente'){showLoginError('Su solicitud está pendiente de aprobación');return;}
+if(user.estado==='bloqueado'){showLoginError('Cuenta bloqueada. Contacte al administrador');return;}
+// Login success
+currentUser=user;
+user.sessions=user.sessions||[];
+user.sessions.push({fecha:new Date().toLocaleDateString('es-CO'),hora:new Date().toLocaleTimeString('es-CO')});
+saveDB();
+logAudit(email,'Inicio de sesión','Exitoso');
+document.getElementById('login-page').style.display='none';
+document.getElementById('app').style.display='block';
+document.getElementById('user-name').textContent=user.nombre;
+document.getElementById('user-role').textContent=user.role==='admin'?'⭐ Super Administrador':'📝 Evaluador';
+renderNav();
+navTo('dashboard');
+toast('✅ Bienvenido/a, '+user.nombre);
+}
+function showLoginError(msg){const err=document.getElementById('login-error');err.textContent='⚠️ '+msg;err.classList.add('show');}
+function doLogout(){currentUser=null;document.getElementById('app').style.display='none';document.getElementById('login-page').style.display='flex';toast('👋 Sesión cerrada');}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function renderNav(){
+const nav=document.getElementById('nav-bar');
+let buttons=[];
+if(currentUser.role==='admin'){
+buttons=[
+['dashboard','📊 Dashboard'],['usuarios','👥 Usuarios'],['registros','📋 Registros'],['ranking','🏆 Ranking'],['plan','🎯 Plan de Acción'],['seguimiento','⏱️ Seguimiento'],['casos','🌍 Casos de País'],['glosario','📖 Glosario'],['config','⚙️ Configuración']
+];
+}else{
+buttons=[
+['bienvenida','🎓 Bienvenida'],['autoeval','📝 Autoevaluación'],['casos','🌍 Casos de País'],['glosario','📖 Glosario']
+];
+}
+nav.innerHTML=buttons.map(([id,label])=>`<button onclick="navTo('${id}')" id="nav-btn-${id}">${label}</button>`).join('');
+}
+function navTo(name){
+document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+const sec=document.getElementById('section-'+name);
+if(sec)sec.classList.add('active');
+document.querySelectorAll('.nav-bar button').forEach(b=>b.classList.remove('active'));
+const btn=document.getElementById('nav-btn-'+name);
+if(btn)btn.classList.add('active');
+// Render content
+if(name==='dashboard')renderDashboard();
+if(name==='bienvenida')renderBienvenida();
+if(name==='autoeval')renderAutoeval();
+if(name==='usuarios')renderUsuarios();
+if(name==='registros')renderRegistros();
+if(name==='ranking')renderRanking();
+if(name==='plan')renderPlan();
+if(name==='seguimiento')renderSeguimiento();
+if(name==='casos')renderCasos();
+if(name==='glosario')renderGlosario();
+if(name==='config')renderConfig();
+window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ============================================================
+// DASHBOARD (Admin)
+// ============================================================
+// Dashboard filter state
+let dashFilters={regiones:[],municipios:[],eses:[],periodo:'',estado:''};
+function renderDashboard(){
+if(currentUser.role!=='admin'){
+document.getElementById('section-dashboard').innerHTML='<div class="card"><p>Su rol no permite acceso al dashboard administrativo.</p></div>';
+return;
+}
+// Apply filters
+let regs=DB.registros.filter(r=>{
+if(dashFilters.regiones.length>0&&!dashFilters.regiones.includes(r.region))return false;
+if(dashFilters.municipios.length>0&&!dashFilters.municipios.includes(r.municipio))return false;
+if(dashFilters.eses.length>0&&!dashFilters.eses.includes(r.ese))return false;
+if(dashFilters.periodo&&!dashFilters.periodo.includes(r.periodo))return false;
+if(dashFilters.estado&&r.estado!==dashFilters.estado)return false;
+return true;
+});
+let html=`<div class="card"><h2>📊 Dashboard Ejecutivo APS</h2><p class="subtitle">Consolidado automático de todos los hospitales participantes · Cundinamarca</p></div>`;
+// Filters
+const periodos=[...new Set(DB.registros.map(r=>r.periodo))].filter(Boolean).sort();
+// Build full lists from HIERARCHY (not just from registros)
+const allMunicipios=[...new Set(HIERARCHY.flatMap(r=>r.municipios.map(m=>m.nombre)))].sort();
+const allEses=[...new Set(HIERARCHY.flatMap(r=>r.municipios.flatMap(m=>m.eses)))].sort();
+html+=`<div class="card">
+<h3>🔍 Filtros Dinámicos (selección múltiple)</h3>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:.5rem">
+<div>
+<label style="font-size:.8rem;font-weight:600;color:var(--bg)">📍 Región (${dashFilters.regiones.length} sel.)</label>
+<select id="dash-f-region" multiple size="8" style="width:100%;border:2px solid #e2e8f0;border-radius:8px;padding:.3rem;font-size:.78rem;margin-top:.25rem" onchange="multiSelectDash('regiones')">
+${HIERARCHY.map(h=>`<option value="${h.region}" ${dashFilters.regiones.includes(h.region)?'selected':''}>${h.region}</option>`).join('')}
+</select>
+</div>
+<div>
+<label style="font-size:.8rem;font-weight:600;color:var(--bg)">🏘️ Municipio (${dashFilters.municipios.length} sel.)</label>
+<select id="dash-f-municipio" multiple size="8" style="width:100%;border:2px solid #e2e8f0;border-radius:8px;padding:.3rem;font-size:.78rem;margin-top:.25rem" onchange="multiSelectDash('municipios')">
+${allMunicipios.map(m=>`<option value="${m}" ${dashFilters.municipios.includes(m)?'selected':''}>${m}</option>`).join('')}
+</select>
+</div>
+<div>
+<label style="font-size:.8rem;font-weight:600;color:var(--bg)">🏥 Hospital/ESE (${dashFilters.eses.length} sel.)</label>
+<select id="dash-f-ese" multiple size="8" style="width:100%;border:2px solid #e2e8f0;border-radius:8px;padding:.3rem;font-size:.75rem;margin-top:.25rem" onchange="multiSelectDash('eses')">
+${allEses.map(e=>`<option value="${e}" ${dashFilters.eses.includes(e)?'selected':''}>${e}</option>`).join('')}
+</select>
+</div>
+<div>
+<label style="font-size:.8rem;font-weight:600;color:var(--bg)">📅 Periodo</label>
+<select onchange="dashFilters.periodo=this.value;renderDashboard()" style="width:100%;padding:.4rem;border:2px solid #e2e8f0;border-radius:6px;font-size:.8rem;margin-top:.25rem">
+<option value="">Todos</option>
+${periodos.map(p=>`<option value="${p}" ${dashFilters.periodo===p?'selected':''}>${p}</option>`).join('')}
+</select>
+<label style="font-size:.8rem;font-weight:600;color:var(--bg);display:block;margin-top:.5rem">Estado</label>
+<select onchange="dashFilters.estado=this.value;renderDashboard()" style="width:100%;padding:.4rem;border:2px solid #e2e8f0;border-radius:6px;font-size:.8rem;margin-top:.25rem">
+<option value="">Todos</option>
+<option value="Completo" ${dashFilters.estado==='Completo'?'selected':''}>Completo</option>
+<option value="Borrador" ${dashFilters.estado==='Borrador'?'selected':''}>Borrador</option>
+</select>
+</div>
+</div>
+<div style="margin-top:.5rem;display:flex;gap:.5rem">
+<button class="btn" style="padding:.3rem .7rem;font-size:.75rem" onclick="dashFilters={regiones:[],municipios:[],eses:[],periodo:'',estado:''};renderDashboard()">🧹 Limpiar Todo</button>
+<span style="font-size:.78rem;color:var(--gray);align-self:center">Mostrando ${regs.length} de ${DB.registros.length} registros</span>
+</div>
+</div>`;
+// Stats
+const total=regs.length;
+const completos=regs.filter(r=>r.estado==='Completo').length;
+const promScore=regs.length>0?regs.reduce((s,r)=>s+getScore(r),0)/regs.length:0;
+const promPct=pct(promScore);
+const hospitales=[...new Set(regs.map(r=>r.ese))].length;
+const pendientes=DB.usuarios.filter(u=>u.estado==='pendiente').length;
+html+=`<div class="stats-grid">
+<div class="stat-card"><div class="label">Registros</div><div class="value">${total}</div><div class="desc">${completos} completos · ${total-completos} en proceso</div></div>
+<div class="stat-card ${semaforo(promPct)}"><div class="label">Nivel Global APS</div><div class="value">${promPct}%</div><div class="desc">Promedio: ${promScore.toFixed(1)}/5</div></div>
+<div class="stat-card accent"><div class="label">Hospitales</div><div class="value">${hospitales}</div><div class="desc">Instituciones participantes</div></div>
+<div class="stat-card ${pendientes>0?'yellow':''}"><div class="label">Usuarios Pendientes</div><div class="value">${pendientes}</div><div class="desc">Solicitudes de acceso</div></div>
+</div>`;
+// Palancas
+html+=`<div class="chart-container"><h3>🎯 Nivel de Madurez por Palanca Operativa</h3>`;
+PALANCAS.forEach(p=>{
+let sum=0,cnt=0;regs.forEach(r=>{const s=getPalancaScore(r,p.id);if(s>0){sum+=s;cnt++;}});
+const avg=cnt>0?sum/cnt:0;const pc=pct(avg);
+html+=`<div class="bar-row"><div class="bar-label">${p.icon} ${p.nombre}</div><div class="bar-track"><div class="bar-fill" style="width:${pc}%;background:${semaforoColor(pc)}">${pc}%</div></div></div>`;
+});
+html+='</div>';
+// Esferas + Regiones
+html+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem" class="results-grid"><div class="chart-container"><h3>🌐 Resultados por Esfera</h3>`;
+ESFERAS.forEach(e=>{
+let sum=0,cnt=0;regs.forEach(r=>{PALANCAS.filter(p=>p.esfera===e.id).forEach(p=>{const s=getPalancaScore(r,p.id);if(s>0){sum+=s;cnt++;}});});
+const avg=cnt>0?sum/cnt:0;const pc=pct(avg);
+html+=`<div class="bar-row"><div class="bar-label">${e.icon} ${e.nombre}</div><div class="bar-track"><div class="bar-fill" style="width:${pc}%;background:${e.color}">${pc}%</div></div></div>`;
+});
+html+='</div><div class="chart-container"><h3>📍 Resultados por Región</h3>';
+HIERARCHY.forEach(h=>{
+let sum=0,cnt=0;regs.filter(r=>r.region===h.region).forEach(r=>{const s=getScore(r);if(s>0){sum+=s;cnt++;}});
+if(cnt>0){const avg=sum/cnt;const pc=pct(avg);html+=`<div class="bar-row"><div class="bar-label">${h.region}</div><div class="bar-track"><div class="bar-fill" style="width:${pc}%;background:${semaforoColor(pc)}">${pc}% (${cnt})</div></div></div>`;}
+});
+html+='</div></div>';
+// Tabla consolidado completo (formato del anexo)
+html+=`<div class="chart-container"><h3>📋 Consolidado Completo por Hospital</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Fecha</th><th>Periodo</th><th>Región</th><th>Municipio</th><th>Hospital/ESE</th><th>Responsable</th><th>Cargo</th><th>Estado</th><th>Score</th><th>%</th></tr></thead><tbody>`;
+regs.forEach(r=>{
+const sc=getScore(r);const pc=pct(sc);
+html+=`<tr><td>${r.fecha||'-'}</td><td>${r.periodo||'-'}</td><td>${r.region}</td><td>${r.municipio}</td><td style="font-size:.72rem">${r.ese}</td><td style="font-size:.78rem">${r.responsable}</td><td style="font-size:.78rem">${r.cargo||'-'}</td><td><span class="pill ${r.estado==='Completo'?'pill-green':'pill-gray'}">${r.estado}</span></td><td><b>${sc.toFixed(2)}</b></td><td><span class="semaforo ${semaforo(pc)}"></span> ${pc}%</td></tr>`;
+});
+if(regs.length===0)html+='<tr><td colspan="10" style="text-align:center;padding:1rem;color:var(--gray)">Sin registros para los filtros seleccionados</td></tr>';
+html+='</tbody></table></div></div>';
+// Detalle por palanca por hospital (formato del anexo)
+html+=`<div class="chart-container"><h3>📊 Detalle por Palanca por Hospital</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Hospital/ESE</th>`;
+PALANCAS.forEach(p=>{html+=`<th style="font-size:.68rem;text-align:center">${p.icon}<br>${p.nombre.substring(0,12)}</th>`;});
+html+=`<th>Global</th></tr></thead><tbody>`;
+// Group by ESE
+const esesRegs={};
+regs.forEach(r=>{if(!esesRegs[r.ese])esesRegs[r.ese]=[];esesRegs[r.ese].push(r);});
+Object.entries(esesRegs).forEach(([ese,eseRegs])=>{
+html+=`<tr><td style="font-size:.72rem;font-weight:600">${ese.substring(0,30)}</td>`;
+let totalSum=0,totalCnt=0;
+PALANCAS.forEach(p=>{
+let sum=0,cnt=0;
+eseRegs.forEach(r=>{const s=getPalancaScore(r,p.id);if(s>0){sum+=s;cnt++;}});
+const avg=cnt>0?sum/cnt:0;const pc=pct(avg);
+totalSum+=avg;totalCnt++;
+html+=`<td style="text-align:center;font-size:.72rem"><span class="semaforo ${semaforo(pc)}"></span> ${pc}%</td>`;
+});
+const globalAvg=totalCnt>0?totalSum/totalCnt:0;const globalPc=pct(globalAvg);
+html+=`<td style="text-align:center;font-weight:700"><span class="semaforo ${semaforo(globalPc)}"></span> ${globalPc}%</td></tr>`;
+});
+if(Object.keys(esesRegs).length===0)html+=`<tr><td colspan="${PALANCAS.length+2}" style="text-align:center;padding:1rem;color:var(--gray)">Sin datos</td></tr>`;
+html+='</tbody></table></div></div>';
+// Heatmap Región × Palanca
+html+=`<div class="chart-container"><h3>🔥 Heatmap: Región × Palanca Operativa</h3><p style="font-size:.82rem;color:var(--gray);margin-bottom:.75rem">Matriz de semaforización — identifica brechas territoriales por palanca</p>
+<div style="overflow-x:auto"><table style="font-size:.75rem"><thead><tr><th>Región</th>`;
+PALANCAS.forEach(p=>{html+=`<th style="text-align:center;font-size:.68rem">${p.icon} ${p.nombre.substring(0,10)}</th>`;});
+html+=`<th style="text-align:center">Global</th></tr></thead><tbody>`;
+HIERARCHY.forEach(hr=>{
+const regRegs=regs.filter(r=>r.region===hr.region);
+if(regRegs.length===0)return;
+html+=`<tr><td style="font-weight:600;font-size:.75rem">${hr.region}</td>`;
+PALANCAS.forEach(p=>{
+let sum=0,cnt=0;regRegs.forEach(r=>{const s=getPalancaScore(r,p.id);if(s>0){sum+=s;cnt++;}});
+const pc=cnt>0?pct(sum/cnt):0;
+const bg=pc===0?'#f1f5f9':semaforoColor(pc);
+html+=`<td style="text-align:center;padding:.2rem"><span style="display:inline-block;padding:.2rem .4rem;border-radius:4px;background:${bg};color:${pc===0?'#94a3b8':'#fff'};font-weight:700;font-size:.72rem">${pc>0?pc+'%':'—'}</span></td>`;
+});
+let gs=0,gc=0;regRegs.forEach(r=>{const s=getScore(r);if(s>0){gs+=s;gc++;}});
+const gpc=pct(gc>0?gs/gc:0);
+html+=`<td style="text-align:center;padding:.2rem"><span style="display:inline-block;padding:.2rem .4rem;border-radius:4px;background:${semaforoColor(gpc)};color:#fff;font-weight:700;font-size:.72rem"><b>${gpc}%</b></span></td></tr>`;
+});
+html+='</tbody></table></div></div>';
+// Distribución por nivel de madurez
+const advanced=regs.filter(r=>pct(getScore(r))>=80).length;
+const developing=regs.filter(r=>{const pc=pct(getScore(r));return pc>=40&&pc<80;}).length;
+const initial=regs.filter(r=>pct(getScore(r))<40).length;
+const totalRegs=regs.length;
+html+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem" class="results-grid">
+<div class="chart-container"><h3>📊 Distribución por Nivel de Madurez</h3>
+<div class="bar-row"><div class="bar-label">🟢 Avanzado (≥80%)</div><div class="bar-track"><div class="bar-fill" style="width:${totalRegs>0?(advanced/totalRegs*100):0}%;background:var(--green)">${advanced}</div></div><span style="font-size:.72rem;color:var(--gray)">${totalRegs>0?Math.round(advanced/totalRegs*100):0}%</span></div>
+<div class="bar-row"><div class="bar-label">🟡 En Desarrollo (40-79%)</div><div class="bar-track"><div class="bar-fill" style="width:${totalRegs>0?(developing/totalRegs*100):0}%;background:#facc15">${developing}</div></div><span style="font-size:.72rem;color:var(--gray)">${totalRegs>0?Math.round(developing/totalRegs*100):0}%</span></div>
+<div class="bar-row"><div class="bar-label">🔴 Inicial (<40%)</div><div class="bar-track"><div class="bar-fill" style="width:${totalRegs>0?(initial/totalRegs*100):0}%;background:var(--red)">${initial}</div></div><span style="font-size:.72rem;color:var(--gray)">${totalRegs>0?Math.round(initial/totalRegs*100):0}%</span></div>
+</div>
+<div class="chart-container"><h3>📈 Estado de Evaluaciones</h3>
+<div class="bar-row"><div class="bar-label">✅ Completas</div><div class="bar-track"><div class="bar-fill" style="width:${totalRegs>0?(completos/totalRegs*100):0}%;background:var(--green)">${completos}</div></div><span style="font-size:.72rem;color:var(--gray)">${totalRegs>0?Math.round(completos/totalRegs*100):0}%</span></div>
+<div class="bar-row"><div class="bar-label">📝 Borrador</div><div class="bar-track"><div class="bar-fill" style="width:${totalRegs>0?((totalRegs-completos)/totalRegs*100):0}%;background:var(--gray)">${totalRegs-completos}</div></div><span style="font-size:.72rem;color:var(--gray)">${totalRegs>0?Math.round((totalRegs-completos)/totalRegs*100):0}%</span></div>
+<div style="margin-top:1rem;padding:.8rem;background:#f0f4f8;border-radius:8px;font-size:.82rem">
+<b>Total registros:</b> ${totalRegs}<br><b>ESE únicas:</b> ${[...new Set(regs.map(r=>r.ese))].length}<br><b>Periodos:</b> ${[...new Set(regs.map(r=>r.periodo))].filter(Boolean).sort().join(', ')||'-'}
+</div>
+</div></div>`;
+// Resumen ejecutivo automático
+const sem=semaforo(promPct);
+const nivelLabel=sem==='green'?'AVANZADO':sem==='yellow'?'EN DESARROLLO':'INICIAL';
+let weakest=null,strongest=null;
+PALANCAS.forEach(p=>{let sum=0,cnt=0;regs.forEach(r=>{const s=getPalancaScore(r,p.id);if(s>0){sum+=s;cnt++;}});const pc=pct(cnt>0?sum/cnt:0);if(!weakest||pc<weakest.pc)weakest={p,pc};if(!strongest||pc>strongest.pc)strongest={p,pc};});
+let weakestReg=null;
+HIERARCHY.forEach(h=>{let sum=0,cnt=0;regs.filter(r=>r.region===h.region).forEach(r=>{const s=getScore(r);if(s>0){sum+=s;cnt++;}});if(cnt>0){const pc=pct(sum/cnt);if(!weakestReg||pc<weakestReg.pc)weakestReg={region:h.region,pc};}});
+const totalESETotal=HIERARCHY.reduce((s,r)=>s+r.municipios.reduce((sm,m)=>sm+m.eses.length,0),0);
+html+=`<div class="chart-container"><h3>📄 Resumen Ejecutivo</h3><div style="padding:1rem;background:#f0f4f8;border-radius:8px;font-size:.85rem;line-height:1.8">
+<p><b>Estado general:</b> El nivel global de implementación APS en las ESE evaluadas de Cundinamarca es <b>${promPct}%</b> (${nivelLabel}), basado en ${regs.length} registro(s) de autoevaluación correspondientes a ${hospitales} ESE (cobertura del ${totalESETotal>0?Math.round(hospitales/totalESETotal*100):0}% del total departamental).</p>
+${strongest?`<p><b>Fortaleza principal:</b> La palanca <b>${strongest.p.icon} ${strongest.p.nombre}</b> presenta el mayor nivel con <b>${strongest.pc}%</b>.</p>`:''}
+${weakest?`<p><b>Brecha crítica:</b> La palanca <b>${weakest.p.icon} ${weakest.p.nombre}</b> es la más débil con <b>${weakest.pc}%</b>, requiriendo atención prioritaria.</p>`:''}
+${weakestReg?`<p><b>Región prioritaria:</b> ${weakestReg.region} presenta el menor desempeño (${weakestReg.pc}%).</p>`:''}
+<p><b>Completitud:</b> ${completos} de ${regs.length} evaluaciones completas (${regs.length>0?Math.round(completos/regs.length*100):0}%).</p>
+<p><b>Recomendaciones:</b> 1) Priorizar intervenciones en ${weakest?weakest.p.nombre:'las palancas débiles'}; 2) Apoyar ESE en nivel inicial; 3) Replicar buenas prácticas de ESE avanzadas; 4) Completar evaluaciones en borrador.</p>
+</div></div>`;
+// Export buttons
+html+=`<div class="card" style="display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center">
+<button class="btn btn-green" onclick="exportExcel()">📥 Excel</button>
+<button class="btn btn-accent" onclick="exportPDF()">📄 PDF</button>
+<button class="btn" onclick="exportWord()">📝 Word</button>
+<button class="btn" onclick="exportPPT()">📊 PowerPoint</button>
+<button class="btn" onclick="exportJSON()">🔧 Power BI (JSON)</button>
+</div>`;
+document.getElementById('section-dashboard').innerHTML=html;
+}
+function multiSelectDash(type){
+const selId='dash-f-'+(type==='regiones'?'region':type==='municipios'?'municipio':'ese');
+const sel=document.getElementById(selId);
+if(!sel)return;
+dashFilters[type]=[...sel.selectedOptions].map(o=>o.value);
+renderDashboard();
+}
+
+// ============================================================
+// BIENVENIDA EDUCATIVA
+// ============================================================
+function renderBienvenida(){
+let html=`<div class="edu-hero"><h2>🎓 Bienvenida al Sistema de Autoevaluación APS</h2><p>Antes de diligenciar el instrumento, revise el contenido educativo obligatorio sobre las Tres Esferas de la APS y la Declaración de Astaná (2018)</p></div>`;
+// Progress bar
+html+=`<div class="edu-progbar"><div class="edu-progbar-fill" id="edu-prog" style="width:0%"></div></div>`;
+// Introducción ampliada (bibliografía OMS)
+html+=`<div class="card">
+<h2>📖 Introducción a la Atención Primaria de Salud (APS)</h2>
+<p style="font-size:.9rem;margin-bottom:1rem">La Atención Primaria de Salud (APS) es un enfoque integral que abarca a toda la sociedad para la salud y el bienestar, basado en los principios de equidad, derechos humanos y justicia social. Fue definida por primera vez en la <strong>Declaración de Alma-Ata (1978)</strong> y reafirmada en la <strong>Declaración de Astaná (2018)</strong> como la estrategia más inclusiva, eficiente y costo-efectiva para mejorar la salud de las poblaciones.</p>
+<div style="background:#f0f4f8;border-radius:8px;padding:1rem;margin-bottom:1rem">
+<h4 style="color:var(--bg);font-size:.85rem;margin-bottom:.5rem">¿Qué es la APS según la OMS?</h4>
+<p style="font-size:.82rem">La APS no se limita a la atención primaria (primer nivel de atención). Es un enfoque amplio que integra tres componentes interconectados: <strong>servicios de salud integrados</strong>, <strong>participación comunitaria empoderada</strong> y <strong>acción multisectorial</strong>. La APS reconoce que la salud se determina por factores sociales, económicos y ambientales que van más allá del sistema sanitario.</p>
+</div>
+<div style="background:#f0f4f8;border-radius:8px;padding:1rem;margin-bottom:1rem">
+<h4 style="color:var(--bg);font-size:.85rem;margin-bottom:.5rem">Las 4 C de Starfield — Características de la Atención Primaria</h4>
+<p style="font-size:.82rem;margin-bottom:.5rem">Barbara Starfield (1994) definió cuatro características esenciales que toda atención primaria debe cumplir:</p>
+<ul style="font-size:.82rem;margin-left:1.2rem">
+<li><strong>Primer contacto:</strong> Es la puerta de entrada al sistema de salud, el primer nivel donde las personas presentan sus problemas de salud</li>
+<li><strong>Continua:</strong> Mantiene una relación longitudinal entre el paciente y el equipo de salud a lo largo del tiempo</li>
+<li><strong>Integral:</strong> Aborda todas las necesidades de salud (físicas, mentales, sociales) en un continuo promocional-rehabilitador</li>
+<li><strong>Coordinada:</strong> Articula servicios entre niveles de atención para evitar fragmentación y duplicidad</li>
+</ul>
+</div>
+<div style="background:#f0f4f8;border-radius:8px;padding:1rem;margin-bottom:1rem">
+<h4 style="color:var(--bg);font-size:.85rem;margin-bottom:.5rem">Las 8 Palancas Operativas del Marco OMS/UNICEF 2024</h4>
+<p style="font-size:.82rem;margin-bottom:.5rem">El Informe Mundial sobre APS (OMS 2024) identifica 8 palancas operativas que los países deben abordar para implementar el enfoque de APS:</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;font-size:.78rem">
+<div>🏥 <strong>Modelos de atención</strong> — Servicios integrales centrados en la persona</div>
+<div>⚖️ <strong>Gobernanza</strong> — Decisiones descentralizadas con participación social</div>
+<div>👨‍⚕️ <strong>Personal sanitario</strong> — Planificación, formación y retención de talento</div>
+<div>💰 <strong>Financiamiento</strong> — Recaudación, mancomunación y compra estratégica</div>
+<div>💊 <strong>Medicamentos</strong> — Acceso equitativo y uso racional</div>
+<div>🔬 <strong>Tecnologías</strong> — Equipos apropiados y diagnóstico temprano</div>
+<div>🏗️ <strong>Infraestructura</strong> — WASH, edificios y mantenimiento</div>
+<div>💻 <strong>Sistemas de información</strong> — Registros electrónicos e interoperabilidad</div>
+</div>
+</div>
+<div style="background:#f0f4f8;border-radius:8px;padding:1rem">
+<h4 style="color:var(--bg);font-size:.85rem;margin-bottom:.5rem">¿Por qué es importante para Cundinamarca?</h4>
+<p style="font-size:.82rem">Cundinamarca cuenta con <strong>14 regiones de salud, 116 municipios y 122 ESE</strong>. La autoevaluación APS permite a cada institución identificar sus brechas de implementación frente al marco internacional, priorizar acciones de mejora y contribuir al fortalecimiento del sistema de salud departamental. Los resultados alimentan un dashboard consolidado que permite a la Gobernación tomar decisiones basadas en evidencia para avanzar hacia la Cobertura Sanitaria Universal (CSU).</p>
+</div>
+</div>`;
+// Esferas
+EDUCATION.esferas.forEach(s=>{
+html+=`<div class="edu-sphere ${s.num===1?'blue':s.num===2?'green':'yellow'}">
+<h3><div class="sphere-icon">${s.icon}</div> Esfera ${s.num}: ${s.nombre}</h3>
+<p><strong>Definición:</strong> ${s.definicion}</p>
+<h4>Objetivos</h4><ul>${s.objetivos.map(o=>`<li>${o}</li>`).join('')}</ul>`;
+if(s.sectores){html+=`<h4>Sectores Intersectoriales</h4><ul>${s.sectores.map(s=>`<li>${s}</li>`).join('')}</ul>`;}
+if(s.mecanismos){html+=`<h4>Mecanismos de Participación</h4><ul>${s.mecanismos.map(m=>`<li>${m}</li>`).join('')}</ul>`;}
+if(s.ejemplos){html+=`<h4>Ejemplos</h4><ul>${s.ejemplos.map(e=>`<li>${e}</li>`).join('')}</ul>`;}
+html+=`<h4>Aplicación Territorial</h4><p>${s.aplicacionTerritorial}</p>
+<h4>Ejemplos en Colombia</h4><ul>${s.ejemplosColombia.map(e=>`<li>${e}</li>`).join('')}</ul>
+<h4>Beneficios</h4><ul>${s.beneficios.map(b=>`<li>${b}</li>`).join('')}</ul>
+</div>`;
+});
+// Astaná
+const a=EDUCATION.astana;
+html+=`<div class="edu-sphere blue">
+<h3><div class="sphere-icon">📋</div> ${a.titulo}</h3>
+<p style="font-size:.82rem;color:var(--gray)">${a.subtitulo}</p>
+<h4>Antecedentes</h4><ul>${a.antecedentes.map(x=>`<li>${x}</li>`).join('')}</ul>
+<h4>Principios</h4><ul>${a.principios.map(x=>`<li>${x}</li>`).join('')}</ul>
+<h4>Objetivos</h4><ul>${a.objetivos.map(x=>`<li>${x}</li>`).join('')}</ul>
+<h4>Compromisos</h4><ul>${a.compromisos.map(x=>`<li>${x}</li>`).join('')}</ul>
+<h4>Importancia Mundial</h4><p>${a.importanciaMundial}</p>
+<h4>Importancia para Colombia</h4><p>${a.importanciaColombia}</p>
+<h4>Relaciones Clave</h4><ul>${Object.entries(a.relaciones).map(([k,v])=>`<li><strong>${k}:</strong> ${v}</li>`).join('')}</ul>
+</div>`;
+// Confirmation
+html+=`<div class="edu-confirm">
+<label><input type="checkbox" id="edu-confirm-check" onchange="updateEduProgress()"> He revisado el contenido educativo sobre las Tres Esferas de la APS y la Declaración de Astaná. Comprendo los conceptos y estoy listo para diligenciar la autoevaluación.</label>
+</div>
+<div style="text-align:center"><button class="btn btn-accent btn-large" id="edu-continue-btn" onclick="navTo('autoeval')" disabled>📝 Continuar a la Autoevaluación</button></div>`;
+document.getElementById('section-bienvenida').innerHTML=html;
+}
+function updateEduProgress(){
+const checked=document.getElementById('edu-confirm-check').checked;
+document.getElementById('edu-continue-btn').disabled=!checked;
+document.getElementById('edu-prog').style.width=checked?'100%':'0%';
+}
+
+// ============================================================
+// AUTOEVALUACIÓN
+// ============================================================
+function renderAutoeval(){
+let html=`<div class="card"><h2>📝 Autoevaluación APS</h2><p class="subtitle">Instrumento basado en las 8 palancas operativas del Informe Mundial OMS 2024</p></div>`;
+// Progress bar
+html+=`<div class="progbar"><div class="progbar-fill" id="autoeval-prog" style="width:0%">0%</div></div>`;
+// Cobertura institucional
+html+=`<div class="card"><div class="section-label">1. Cobertura Institucional</div>
+<div class="form-grid">
+<div class="form-group"><label>Región de Salud *</label><select id="ae-region" onchange="updateAEMuni()"><option value="">--</option></select></div>
+<div class="form-group"><label>Municipio *</label><select id="ae-municipio" disabled onchange="updateAEEse()"><option value="">-- Seleccione --</option></select></div>
+<div class="form-group"><label>Hospital/ESE *</label><select id="ae-ese" disabled><option value="">--</option></select></div>
+</div></div>`;
+// Info general
+html+=`<div class="card"><div class="section-label">2. Información General</div>
+<div class="form-grid">
+<div class="form-group"><label>Fecha *</label><input type="date" id="ae-fecha" readonly></div>
+<div class="form-group"><label>Periodo evaluado *</label><select id="ae-periodo"><option value="">--</option><option value="2026-Q1">2026 Q1</option><option value="2026-Q2">2026 Q2</option><option value="2026-Q3">2026 Q3</option><option value="2026-Q4">2026 Q4</option></select></div>
+<div class="form-group"><label>Responsable *</label><input type="text" id="ae-responsable" readonly></div>
+<div class="form-group"><label>Cargo *</label><input type="text" id="ae-cargo" readonly></div>
+<div class="form-group"><label>Correo *</label><input type="email" id="ae-correo" readonly></div>
+<div class="form-group"><label>Teléfono *</label><input type="tel" id="ae-telefono" readonly></div>
+</div></div>`;
+// Preguntas
+html+=`<div class="card"><div class="section-label">3. Autoevaluación (Escala 1-5)</div>
+<p class="subtitle">1=No implementado · 2=Inicial · 3=En desarrollo · 4=Establecido · 5=Optimizado</p><div id="ae-preguntas"></div></div>`;
+html+=`<div style="text-align:center;margin:1.5rem 0">
+<button class="btn btn-accent btn-large" onclick="saveAutoeval('Completo')">✅ Enviar Evaluación</button>
+<button class="btn btn-large" onclick="saveAutoeval('Borrador')">💾 Guardar Borrador</button>
+</div>`;
+document.getElementById('section-autoeval').innerHTML=html;
+// Fill selects — always load ALL regions
+const selR=document.getElementById('ae-region');
+HIERARCHY.forEach(r=>{
+const o=document.createElement('option');
+o.value=r.region;
+o.textContent=r.region;
+if(currentUser.region===r.region)o.selected=true;
+selR.appendChild(o);
+});
+// If user has a region pre-selected, trigger the cascade
+if(currentUser.region){
+updateAEMuni();
+}
+// Auto-fill user data
+document.getElementById('ae-fecha').value=new Date().toISOString().substring(0,10);
+document.getElementById('ae-responsable').value=currentUser.nombre;
+document.getElementById('ae-cargo').value=currentUser.cargo;
+document.getElementById('ae-correo').value=currentUser.email;
+document.getElementById('ae-telefono').value=currentUser.telefono||'';
+if(currentUser.ese){
+// Pre-fill municipality and ESE
+setTimeout(()=>{
+const r=HIERARCHY.find(x=>x.region===currentUser.region);
+if(r){updateAEMuni();setTimeout(()=>{
+document.getElementById('ae-municipio').value=currentUser.municipio||r.municipios[0].nombre;
+updateAEEse();setTimeout(()=>{
+if(currentUser.ese)document.getElementById('ae-ese').value=currentUser.ese;
+},50);
+},50);}
+},50);
+}
+renderAEPreguntas();
+}
+function updateAEMuni(){
+const reg=document.getElementById('ae-region').value;
+const selM=document.getElementById('ae-municipio');const selE=document.getElementById('ae-ese');
+selM.innerHTML='<option value="">--</option>';selE.innerHTML='<option value="">--</option>';selE.disabled=true;
+if(reg){const r=HIERARCHY.find(x=>x.region===reg);r.municipios.forEach(m=>{const o=document.createElement('option');o.value=m.nombre;o.textContent=m.nombre;selM.appendChild(o);});selM.disabled=false;}else{selM.disabled=true;}
+}
+function updateAEEse(){
+const reg=document.getElementById('ae-region').value;const mun=document.getElementById('ae-municipio').value;
+const selE=document.getElementById('ae-ese');selE.innerHTML='<option value="">--</option>';
+if(reg&&mun){const r=HIERARCHY.find(x=>x.region===reg);const m=r.municipios.find(x=>x.nombre===mun);m.eses.forEach(e=>{const o=document.createElement('option');o.value=e;o.textContent=e;selE.appendChild(o);});selE.disabled=false;}else{selE.disabled=true;}
+}
+// ae-municipio uses inline onchange="updateAEEse()" — no addEventListener needed
+function renderAEPreguntas(){
+const c=document.getElementById('ae-preguntas');
+let html='';
+PALANCAS.forEach(p=>{
+const esf=ESFERAS.find(e=>e.id===p.esfera);
+html+=`<div style="margin-bottom:1.5rem"><h3 style="color:var(--bg);font-size:1rem;margin-bottom:.25rem">${p.icon} ${p.nombre}</h3><p style="font-size:.78rem;color:var(--gray);margin-bottom:.75rem">${p.desc} · Esfera: ${esf.nombre}</p>`;
+p.preguntas.forEach((q,i)=>{
+const key=p.id+'_'+i;
+html+=`<div class="q-block"><div class="q-text"><span class="q-num">${i+1}.</span>${q}</div><div class="scale-opts">`;
+for(let v=1;v<=5;v++){html+=`<label><input type="radio" name="ae_${key}" value="${v}" onchange="setAEResp('${key}',${v})"><span class="opt-num">${v}</span><span class="opt-text">${['','No impl.','Inicial','En desarr.','Establec.','Optim.'][v]}</span></label>`;}
+html+=`</div></div>`;
+});
+html+='</div>';
+});
+c.innerHTML=html;
+}
+function setAEResp(key,val){
+formRespuestas[key]=val;
+// Update progress
+let answered=0,total=0;
+PALANCAS.forEach(p=>p.preguntas.forEach((q,i)=>{total++;if(formRespuestas[p.id+'_'+i])answered++;}));
+const pct=Math.round(answered/total*100);
+document.getElementById('autoeval-prog').style.width=pct+'%';
+document.getElementById('autoeval-prog').textContent=pct+'%';
+}
+function saveAutoeval(estado){
+const region=document.getElementById('ae-region').value;
+const municipio=document.getElementById('ae-municipio').value;
+const ese=document.getElementById('ae-ese').value;
+const periodo=document.getElementById('ae-periodo').value;
+if(!region||!municipio||!ese||!periodo){toast('⚠️ Complete campos obligatorios',true);return;}
+let answered=0;PALANCAS.forEach(p=>p.preguntas.forEach((q,i)=>{if(formRespuestas[p.id+'_'+i])answered++;}));
+if(estado==='Completo'&&answered<40){toast('⚠️ Complete las 40 preguntas para enviar ('+answered+'/40)',true);return;}
+const reg={id:editId||genId(),fecha:new Date().toISOString().substring(0,10),periodo,region,municipio,ese,responsable:currentUser.nombre,cargo:currentUser.cargo,correo:currentUser.email,telefono:currentUser.telefono||'',userId:currentUser.id,estado,respuestas:{...formRespuestas},fechaMod:new Date().toISOString()};
+if(editId){const idx=DB.registros.findIndex(r=>r.id===editId);if(idx>=0)DB.registros[idx]=reg;}else{DB.registros.push(reg);}
+editId=null;
+saveDB();logAudit(currentUser.email,'Guardar autoevaluación',`${ese} - ${periodo} - ${estado}`);
+toast('✅ '+(estado==='Completo'?'Evaluación enviada':'Borrador guardado'));
+// Si es Completo, mostrar resultados al evaluador
+if(estado==='Completo'){
+showResultsEvaluador(reg);
+}else{
+formRespuestas={};
+renderAutoeval();
+}
+}
+
+function showResultsEvaluador(reg){
+const sc=getScore(reg);const pc=pct(sc);
+const sem=semaforo(pc);
+const nivel=sem==='green'?'AVANZADO (≥80%)':sem==='yellow'?'EN DESARROLLO (40-79%)':'INICIAL (<40%)';
+let html=`<div class="card" style="text-align:center">
+<div style="font-size:3rem;margin-bottom:.5rem">${sem==='green'?'🎉':sem==='yellow'?'📊':'⚠️'}</div>
+<h2 style="color:var(--bg);font-size:1.5rem">Resultados de su Autoevaluación APS</h2>
+<p style="color:var(--gray);font-size:.9rem;margin-bottom:1rem">${reg.ese} · ${reg.municipio} · ${reg.periodo}</p>
+<div style="display:inline-block;background:${semaforoColor(pc)};color:var(--white);padding:1rem 2rem;border-radius:12px;margin-bottom:1.5rem">
+<div style="font-size:2.5rem;font-weight:800">${pc}%</div>
+<div style="font-size:.85rem;opacity:.9">${nivel}</div>
+</div>
+<p style="font-size:.85rem;color:var(--gray)">Promedio de madurez: <b>${sc.toFixed(1)}/5</b> · Respuestas: 40/40</p>
+</div>`;
+
+// Resultados por palanca
+html+=`<div class="card"><h2>🎯 Resultados por Palanca Operativa</h2><p class="subtitle">Nivel de implementación por cada palanca del Marco OMS 2024</p>`;
+PALANCAS.forEach(p=>{
+const ps=getPalancaScore(reg,p.id);const pp=pct(ps);
+const esf=ESFERAS.find(e=>e.id===p.esfera);
+html+=`<div style="margin-bottom:1rem;padding:.75rem;background:#f8fafc;border-radius:8px;border-left:4px solid ${semaforoColor(pp)}">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.25rem">
+<b style="font-size:.9rem;color:var(--bg)">${p.icon} ${p.nombre}</b>
+<span class="pill ${sem==='green'?'pill-green':sem==='yellow'?'pill-yellow':'pill-red'}">${pp}%</span>
+</div>
+<div style="font-size:.72rem;color:var(--gray);margin-bottom:.3rem">Esfera: ${esf.icon} ${esf.nombre}</div>
+<div class="bar-row"><div class="bar-track" style="flex:1"><div class="bar-fill" style="width:${pp}%;background:${semaforoColor(pp)}">${pp}% (${ps.toFixed(1)}/5)</div></div></div>`;
+// Mostrar cada respuesta
+p.preguntas.forEach((q,i)=>{
+const val=reg.respuestas[p.id+'_'+i]||0;
+const valPct=Math.round(val/5*100);
+const labels=['','No implementado','Inicial','En desarrollo','Establecido','Optimizado'];
+html+=`<div style="display:flex;align-items:center;gap:.5rem;margin-top:.2rem;font-size:.75rem">
+<span class="semaforo ${semaforo(valPct)}" style="width:10px;height:10px"></span>
+<span style="flex:1;color:var(--dark)">${q.substring(0,70)}${q.length>70?'...':''}</span>
+<span style="font-weight:700;color:${semaforoColor(valPct)}">${val}/5</span>
+<span style="font-size:.68rem;color:var(--gray)">${labels[val]||'-'}</span>
+</div>`;
+});
+html+='</div>';
+});
+html+='</div>';
+
+// Resultados por esfera
+html+=`<div class="card"><h2>🌐 Resultados por Esfera de la APS</h2><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem">`;
+ESFERAS.forEach(e=>{
+let sum=0,cnt=0;
+PALANCAS.filter(p=>p.esfera===e.id).forEach(p=>{const s=getPalancaScore(reg,p.id);if(s>0){sum+=s;cnt++;}});
+const avg=cnt>0?sum/cnt:0;const epc=pct(avg);
+html+=`<div style="text-align:center;padding:1rem;border-radius:8px;background:${e.color}15;border:2px solid ${e.color}">
+<div style="font-size:1.5rem">${e.icon}</div>
+<div style="font-weight:700;color:${e.color};font-size:.85rem;margin:.25rem 0">${e.nombre}</div>
+<div style="font-size:1.8rem;font-weight:800;color:${e.color}">${epc}%</div>
+<div style="font-size:.72rem;color:var(--gray)">${avg.toFixed(1)}/5</div>
+</div>`;
+});
+html+='</div></div>';
+
+// Plan de acción generado
+let autoAcciones=[];
+PALANCAS.forEach(p=>{
+const ps=getPalancaScore(reg,p.id);const pp=pct(ps);
+if(pp<80){
+let prioridad,plazo,accion;
+if(pp<40){prioridad='ALTA';plazo='3-6 meses';accion=`Implementar ${p.nombre.toLowerCase()}: establecer marco básico y plan piloto`;}
+else if(pp<60){prioridad='MEDIA';plazo='6-12 meses';accion=`Fortalecer ${p.nombre.toLowerCase()}: consolidar procesos y capacitar personal`;}
+else{prioridad='BAJA';plazo='12-18 meses';accion=`Optimizar ${p.nombre.toLowerCase()}: refinar prácticas y evaluar resultados`;}
+autoAcciones.push({p,prioridad,plazo,accion,pp});
+}
+});
+if(autoAcciones.length>0){
+html+=`<div class="card"><h2>🎯 Plan de Acción Generado Automáticamente</h2><p class="subtitle">Basado en los hallazgos de su autoevaluación</p>
+<div class="table-wrap"><table><thead><tr><th>Prioridad</th><th>Palanca</th><th>Nivel</th><th>Acción Recomendada</th><th>Plazo</th></tr></thead><tbody>`;
+autoAcciones.sort((a,b)=>a.pp-b.pp).forEach(a=>{
+const pClass=a.prioridad==='ALTA'?'pill-red':a.prioridad==='MEDIA'?'pill-yellow':'pill-green';
+html+=`<tr><td><span class="pill ${pClass}">${a.prioridad}</span></td><td style="font-size:.78rem">${a.p.icon} ${a.p.nombre}</td><td><span class="semaforo ${semaforo(a.pp)}"></span> ${a.pp}%</td><td style="font-size:.75rem">${a.accion}</td><td style="font-size:.75rem">${a.plazo}</td></tr>`;
+});
+html+='</tbody></table></div></div>';
+}
+
+// Botones
+html+=`<div style="text-align:center;margin:1.5rem 0">
+<button class="btn btn-accent btn-large" onclick="navTo('autoeval')">📝 Nueva Evaluación</button>
+<button class="btn btn-large" onclick="navTo('bienvenida')">🎓 Volver a Inicio</button>
+</div>`;
+
+document.getElementById('section-autoeval').innerHTML=html;
+formRespuestas={};
+window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ============================================================
+// USUARIOS (Admin)
+// ============================================================
+function renderUsuarios(){
+if(currentUser.role!=='admin'){document.getElementById('section-usuarios').innerHTML='<div class="card"><p>Su rol no permite acceso a esta sección.</p></div>';return;}
+let html='<div class="card"><h2>👥 Gestión de Usuarios</h2><p class="subtitle">Administración de accesos y solicitudes pendientes</p></div>';
+// Pending
+const pendientes=DB.usuarios.filter(u=>u.estado==='pendiente');
+if(pendientes.length>0){
+html+='<div class="card"><h3>🟡 Solicitudes Pendientes</h3>';
+pendientes.forEach(u=>{
+html+=`<div class="user-row"><div><div class="user-name">${u.nombre}</div><div class="user-email">${u.email}</div><div class="user-ese">${u.ese}</div><div class="user-status">Cargo: ${u.cargo}</div></div><div><button class="approve-btn" onclick="approveUser('${u.id}')">✅ Aprobar</button> <button class="reject-btn" onclick="rejectUser('${u.id}')">❌ Rechazar</button></div></div>`;
+});
+html+='</div>';
+}
+// Active users
+const activos=DB.usuarios.filter(u=>u.estado==='activo');
+html+='<div class="card"><h3>🟢 Usuarios Activos</h3><div class="table-wrap"><table><thead><tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Hospital/ESE</th><th>Cargo</th><th>Sesiones</th></tr></thead><tbody>';
+activos.forEach(u=>{
+html+=`<tr><td>${u.nombre}</td><td>${u.email}</td><td><span class="pill ${u.role==='admin'?'pill-yellow':'pill-blue'}">${u.role}</span></td><td style="font-size:.78rem">${u.ese||'-'}</td><td style="font-size:.78rem">${u.cargo||'-'}</td><td>${(u.sessions||[]).length}</td></tr>`;
+});
+html+='</tbody></table></div></div>';
+// Audit
+html+='<div class="card"><h3>📋 Auditoría de Accesos</h3><div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Hora</th><th>Usuario</th><th>Acción</th><th>Detalle</th></tr></thead><tbody>';
+DB.auditoria.slice().reverse().forEach(a=>{html+=`<tr><td>${a.fecha}</td><td>${a.hora}</td><td>${a.usuario}</td><td><span class="pill pill-blue">${a.accion}</span></td><td style="font-size:.78rem">${a.detalle}</td></tr>`;});
+html+='</tbody></table></div></div>';
+document.getElementById('section-usuarios').innerHTML=html;
+}
+function approveUser(id){
+const u=DB.usuarios.find(x=>x.id===id);if(!u)return;u.estado='activo';saveDB();logAudit(currentUser.email,'Aprobar usuario',u.email);toast('✅ Usuario aprobado: '+u.nombre);renderUsuarios();
+}
+function rejectUser(id){const u=DB.usuarios.find(x=>x.id===id);if(!u)return;u.estado='rechazado';saveDB();logAudit(currentUser.email,'Rechazar usuario',u.email);toast('❌ Usuario rechazado: '+u.nombre);renderUsuarios();}
+
+// ============================================================
+// REGISTROS
+// ============================================================
+function renderRegistros(){
+let html='<div class="card"><h2>📋 Registros de Autoevaluación</h2><p class="subtitle">Todos los formularios con trazabilidad completa</p></div>';
+let regs=DB.registros;
+if(currentUser.role==='evaluador')regs=regs.filter(r=>r.userId===currentUser.id);
+let html2='<div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Periodo</th><th>Región</th><th>Municipio</th><th>Hospital/ESE</th><th>Responsable</th><th>Estado</th><th>Nivel</th><th>Acciones</th></tr></thead><tbody>';
+regs.sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||'')).forEach(r=>{
+const sc=getScore(r);const pc=pct(sc);
+html2+=`<tr><td>${r.fecha}</td><td>${r.periodo}</td><td>${r.region}</td><td>${r.municipio}</td><td style="font-size:.75rem">${r.ese}</td><td>${r.responsable}</td><td><span class="pill ${r.estado==='Completo'?'pill-green':'pill-gray'}">${r.estado}</span></td><td><span class="semaforo ${semaforo(pc)}"></span> ${pc}%</td><td><button class="btn" style="padding:.2rem .4rem;font-size:.68rem" onclick="editReg('${r.id}')">✏️</button></td></tr>`;
+});
+if(regs.length===0)html2+='<tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--gray)">No hay registros</td></tr>';
+html2+='</tbody></table></div>';
+document.getElementById('section-registros').innerHTML=html+html2;
+}
+function editReg(id){
+const r=DB.registros.find(x=>x.id===id);if(!r)return;
+// Only allow editing own records for evaluadores
+if(currentUser.role==='evaluador'&&r.userId!==currentUser.id){toast('⚠️ No tiene permiso para editar este registro',true);return;}
+editId=id;
+navTo('autoeval');
+setTimeout(()=>{
+document.getElementById('ae-region').value=r.region;updateAEMuni();
+setTimeout(()=>{document.getElementById('ae-municipio').value=r.municipio;updateAEEse();
+setTimeout(()=>{document.getElementById('ae-ese').value=r.ese;},50);},50);
+document.getElementById('ae-periodo').value=r.periodo;
+formRespuestas={...r.respuestas};
+PALANCAS.forEach(p=>p.preguntas.forEach((q,i)=>{
+const key=p.id+'_'+i;
+const radios=document.querySelectorAll(`input[name="ae_${key}"]`);
+radios.forEach(rad=>{if(r.respuestas[key]&&parseInt(rad.value)===r.respuestas[key])rad.checked=true;});
+}));
+let answered=0;PALANCAS.forEach(p=>p.preguntas.forEach((q,i)=>{if(formRespuestas[p.id+'_'+i])answered++;}));
+const pc=Math.round(answered/40*100);
+document.getElementById('autoeval-prog').style.width=pc+'%';
+document.getElementById('autoeval-prog').textContent=pc+'%';
+},100);
+toast('📝 Editando registro');
+}
+
+// ============================================================
+// RANKING
+// ============================================================
+function renderRanking(){
+let html='<div class="card"><h2>🏆 Ranking de Hospitales</h2><p class="subtitle">Comparación de niveles de madurez APS por institución</p></div>';
+let rows=DB.registros.map(r=>({reg:r,score:getScore(r),pct:pct(getScore(r))}));
+rows.sort((a,b)=>b.score-a.score);
+let html2='<div class="table-wrap"><table><thead><tr><th>#</th><th>Hospital/ESE</th><th>Región</th><th>Municipio</th><th>Nivel</th><th>Semáforo</th><th>Periodo</th></tr></thead><tbody>';
+rows.forEach((row,i)=>{
+html2+=`<tr><td><b>${i+1}</b></td><td style="font-size:.78rem">${row.reg.ese}</td><td>${row.reg.region}</td><td>${row.reg.municipio}</td><td><b>${row.pct}%</b></td><td><span class="semaforo ${semaforo(row.pct)}"></span></td><td>${row.reg.periodo}</td></tr>`;
+});
+if(rows.length===0)html2+='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--gray)">Sin datos</td></tr>';
+html2+='</tbody></table></div>';
+document.getElementById('section-ranking').innerHTML=html+html2;
+}
+
+// ============================================================
+// PLAN DE ACCIÓN
+// ============================================================
+function renderPlan(){
+let html='<div class="card"><h2>🎯 Plan de Acción Inteligente</h2><p class="subtitle">Generación automática + acciones manuales con enriquecimiento de casos de país</p></div>';
+// Auto-generated
+let autoAcciones=[];
+DB.registros.forEach(r=>{
+PALANCAS.forEach(p=>{
+const sc=getPalancaScore(r,p.id);const pc=pct(sc);
+if(pc>0&&pc<80){
+let prioridad,plazo,accion,riesgo,beneficio;
+if(pc<40){prioridad='ALTA';plazo='3-6 meses';accion=`Implementar ${p.nombre.toLowerCase()}: establecer marco básico y plan piloto`;riesgo='Alto: brecha crítica puede comprometer la estrategia APS';beneficio='Base sólida para implementación de APS';}
+else if(pc<60){prioridad='MEDIA';plazo='6-12 meses';accion=`Fortalecer ${p.nombre.toLowerCase()}: consolidar procesos y capacitar personal`;riesgo='Medio: falta de avance puede perpetuar brechas';beneficio='Mejora significativa en madurez APS';}
+else{prioridad='BAJA';plazo='12-18 meses';accion=`Optimizar ${p.nombre.toLowerCase()}: refinar prácticas y evaluar resultados`;riesgo='Bajo: gap menor, optimización continua';beneficio='Consolidación de buenas prácticas';}
+// Find relevant country case
+const casoRelevante=CASOS_PAIS.find(c=>c.aplicabilidadColombia&&c.aplicabilidadColombia.toLowerCase().includes(p.nombre.toLowerCase().split(' ')[0]));
+autoAcciones.push({tipo:'auto',palanca:p.nombre,palancaId:p.id,problema:`Nivel bajo en ${p.nombre} (${pc}%)`,causaRiesgo:riesgo,objetivo:`Mejorar ${p.nombre.toLowerCase()} a ≥80%`,actividad:accion,meta:'≥80% de implementación',indicador:'Nivel de madurez APS',lineaBase:pc+'%',metaEsp:'80%',responsable:r.responsable,area:r.ese,recursos:'Por definir',inicio:r.fecha,fin:'',periodicidad:'Trimestral',estado:'Pendiente',avance:0,prioridad,beneficio,recomendacionTecnica:casoRelevante?`Caso de referencia: ${casoRelevante.pais} - ${casoRelevante.estrategia}`:'No hay caso específico disponible',casoPais:casoRelevante?casoRelevante.pais:'',hospital:r.ese,region:r.region,municipio:r.municipio,observaciones:'Generado automáticamente'});
+}
+});
+});
+// Manual
+let allAcciones=[...autoAcciones,...DB.acciones.map(a=>({...a,tipo:'manual'}))];
+if(allAcciones.length>0){
+html+='<div class="card"><h3>📋 Acciones de Mejora</h3><div class="table-wrap"><table><thead><tr><th>Tipo</th><th>Palanca</th><th>Problema</th><th>Objetivo</th><th>Prioridad</th><th>Responsable</th><th>Estado</th><th>% Avance</th><th>Recomendación</th></tr></thead><tbody>';
+allAcciones.forEach(a=>{
+const pClass=a.prioridad==='ALTA'?'pill-red':a.prioridad==='MEDIA'?'pill-yellow':'pill-green';
+html+=`<tr><td><span class="pill ${a.tipo==='auto'?'pill-blue':'pill-gray'}">${a.tipo==='auto'?'Auto':'Manual'}</span></td><td style="font-size:.75rem">${a.palanca}</td><td style="font-size:.75rem">${a.problema}</td><td style="font-size:.75rem">${a.objetivo}</td><td><span class="pill ${pClass}">${a.prioridad||'-'}</span></td><td style="font-size:.75rem">${a.responsable||'-'}</td><td>${a.estado||'Pendiente'}</td><td>${a.avance||0}%</td><td style="font-size:.72rem">${a.recomendacionTecnica||'-'}</td></tr>`;
+});
+html+='</tbody></table></div></div>';
+}else{
+html+='<div class="card"><p style="text-align:center;color:var(--gray);padding:1rem">No hay acciones registradas.</p></div>';
+}
+// Manual form
+html+=`<div class="card"><h3>➕ Nueva Acción de Mejora</h3><div class="form-grid">
+<div class="form-group"><label>Palanca operativa</label><select id="pa-palanca">${PALANCAS.map(p=>`<option value="${p.id}">${p.icon} ${p.nombre}</option>`).join('')}</select></div>
+<div class="form-group"><label>Problema identificado *</label><input type="text" id="pa-problema"></div>
+<div class="form-group"><label>Causa raíz / Riesgo *</label><input type="text" id="pa-causa"></div>
+<div class="form-group"><label>Objetivo general *</label><input type="text" id="pa-objetivo"></div>
+<div class="form-group"><label>Actividad *</label><input type="text" id="pa-actividad"></div>
+<div class="form-group"><label>Meta cuantificable *</label><input type="text" id="pa-meta"></div>
+<div class="form-group"><label>Indicador</label><input type="text" id="pa-indicador"></div>
+<div class="form-group"><label>Línea base</label><input type="text" id="pa-base"></div>
+<div class="form-group"><label>Meta esperada</label><input type="text" id="pa-metaesp"></div>
+<div class="form-group"><label>Responsable</label><input type="text" id="pa-resp"></div>
+<div class="form-group"><label>Área responsable</label><input type="text" id="pa-area"></div>
+<div class="form-group"><label>Recursos</label><input type="text" id="pa-recursos"></div>
+<div class="form-group"><label>Fecha inicio</label><input type="date" id="pa-inicio"></div>
+<div class="form-group"><label>Fecha fin</label><input type="date" id="pa-fin"></div>
+<div class="form-group"><label>Periodicidad</label><select id="pa-per">${['Mensual','Bimestral','Trimestral','Cuatrimestral','Semestral','Anual','Extraordinaria'].map(p=>`<option value="${p}">${p}</option>`).join('')}</select></div>
+<div class="form-group"><label>Observaciones</label><textarea id="pa-obs" rows="2"></textarea></div>
+</div><div style="margin-top:1rem"><button class="btn btn-accent" onclick="addAccion()">➕ Agregar</button></div></div>`;
+document.getElementById('section-plan').innerHTML=html;
+}
+function addAccion(){
+const palancaId=parseInt(document.getElementById('pa-palanca').value);
+const palanca=PALANCAS.find(p=>p.id===palancaId);
+const a={id:genId(),tipo:'manual',palancaId,palanca:palanca?palanca.nombre:'',problema:val('pa-problema'),causaRiesgo:val('pa-causa'),objetivo:val('pa-objetivo'),actividad:val('pa-actividad'),meta:val('pa-meta'),indicador:val('pa-indicador'),lineaBase:val('pa-base'),metaEsp:val('pa-metaesp'),responsable:val('pa-resp'),area:val('pa-area'),recursos:val('pa-recursos'),inicio:val('pa-inicio'),fin:val('pa-fin'),periodicidad:val('pa-per'),estado:'Pendiente',avance:0,observaciones:val('pa-obs'),fechaCrea:new Date().toISOString()};
+if(!a.problema||!a.causaRiesgo||!a.objetivo||!a.actividad||!a.meta){toast('⚠️ Complete campos obligatorios',true);return;}
+DB.acciones.push(a);saveDB();logAudit(currentUser.email,'Crear acción',a.actividad);
+['pa-problema','pa-causa','pa-objetivo','pa-actividad','pa-meta','pa-indicador','pa-base','pa-metaesp','pa-resp','pa-area','pa-recursos','pa-inicio','pa-fin','pa-obs'].forEach(id=>document.getElementById(id).value='');
+toast('✅ Acción agregada');renderPlan();
+}
+function val(id){return document.getElementById(id)?.value||'';}
+
+// ============================================================
+// SEGUIMIENTO
+// ============================================================
+// Seguimiento filter state
+let segFilters={regiones:[],municipios:[],eses:[],estado:''};
+function renderSeguimiento(){
+// Build all acciones
+let allAcciones=[...DB.acciones];
+DB.registros.forEach(r=>{
+PALANCAS.forEach(p=>{const sc=getPalancaScore(r,p.id);const pc=pct(sc);
+if(pc>0&&pc<80){allAcciones.push({tipo:'auto',palanca:p.nombre,problema:`Nivel bajo en ${p.nombre} (${pc}%)`,actividad:`Mejorar ${p.nombre.toLowerCase()}`,responsable:r.responsable,inicio:r.fecha,fin:'',periodicidad:'Trimestral',estado:'Pendiente',avance:0,area:r.ese,region:r.region,municipio:r.municipio,ese:r.ese});}
+});
+});
+// Apply filters
+allAcciones=allAcciones.filter(a=>{
+if(segFilters.regiones.length>0&&(!a.region||!segFilters.regiones.includes(a.region)))return false;
+if(segFilters.municipios.length>0&&(!a.municipio||!segFilters.municipios.includes(a.municipio)))return false;
+if(segFilters.eses.length>0&&(!a.ese||!segFilters.eses.includes(a.ese)))return false;
+if(segFilters.estado&&a.estado!==segFilters.estado)return false;
+return true;
+});
+const total=allAcciones.length;
+const pend=allAcciones.filter(a=>a.estado==='Pendiente').length;
+const ejec=allAcciones.filter(a=>a.estado==='En ejecución').length;
+const fin=allAcciones.filter(a=>a.estado==='Finalizada').length;
+const venc=allAcciones.filter(a=>a.fin&&new Date(a.fin)<new Date()&&a.estado!=='Finalizada').length;
+const promAvance=total>0?allAcciones.reduce((s,a)=>s+(a.avance||0),0)/total:0;
+let html=`<div class="card"><h2>⏱️ Seguimiento del Plan de Acción</h2><p class="subtitle">Monitoreo de actividades, cumplimiento y alertas</p></div>`;
+// Filters — use full hierarchy lists
+const allMunicipiosSeg=[...new Set(HIERARCHY.flatMap(r=>r.municipios.map(m=>m.nombre)))].sort();
+const allEsesSeg=[...new Set(HIERARCHY.flatMap(r=>r.municipios.flatMap(m=>m.eses)))].sort();
+html+=`<div class="card">
+<h3>🔍 Filtros (selección múltiple)</h3>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:.5rem">
+<div>
+<label style="font-size:.8rem;font-weight:600;color:var(--bg)">📍 Región (${segFilters.regiones.length} sel.)</label>
+<select id="seg-f-region" multiple size="8" style="width:100%;border:2px solid #e2e8f0;border-radius:8px;padding:.3rem;font-size:.78rem;margin-top:.25rem" onchange="multiSelectSeg('regiones')">
+${HIERARCHY.map(h=>`<option value="${h.region}" ${segFilters.regiones.includes(h.region)?'selected':''}>${h.region}</option>`).join('')}
+</select>
+</div>
+<div>
+<label style="font-size:.8rem;font-weight:600;color:var(--bg)">🏘️ Municipio (${segFilters.municipios.length} sel.)</label>
+<select id="seg-f-municipio" multiple size="8" style="width:100%;border:2px solid #e2e8f0;border-radius:8px;padding:.3rem;font-size:.78rem;margin-top:.25rem" onchange="multiSelectSeg('municipios')">
+${allMunicipiosSeg.map(m=>`<option value="${m}" ${segFilters.municipios.includes(m)?'selected':''}>${m}</option>`).join('')}
+</select>
+</div>
+<div>
+<label style="font-size:.8rem;font-weight:600;color:var(--bg)">🏥 Hospital/ESE (${segFilters.eses.length} sel.)</label>
+<select id="seg-f-ese" multiple size="8" style="width:100%;border:2px solid #e2e8f0;border-radius:8px;padding:.3rem;font-size:.75rem;margin-top:.25rem" onchange="multiSelectSeg('eses')">
+${allEsesSeg.map(e=>`<option value="${e}" ${segFilters.eses.includes(e)?'selected':''}>${e}</option>`).join('')}
+</select>
+</div>
+<div>
+<label style="font-size:.8rem;font-weight:600;color:var(--bg)">Estado actividad</label>
+<select onchange="segFilters.estado=this.value;renderSeguimiento()" style="width:100%;padding:.4rem;border:2px solid #e2e8f0;border-radius:6px;font-size:.8rem;margin-top:.25rem">
+<option value="">Todos</option>
+<option value="Pendiente" ${segFilters.estado==='Pendiente'?'selected':''}>Pendiente</option>
+<option value="En ejecución" ${segFilters.estado==='En ejecución'?'selected':''}>En ejecución</option>
+<option value="Finalizada" ${segFilters.estado==='Finalizada'?'selected':''}>Finalizada</option>
+</select>
+</div>
+</div>
+<div style="margin-top:.5rem;display:flex;gap:.5rem">
+<button class="btn" style="padding:.3rem .7rem;font-size:.75rem" onclick="segFilters={regiones:[],municipios:[],eses:[],estado:''};renderSeguimiento()">🧹 Limpiar Todo</button>
+<span style="font-size:.78rem;color:var(--gray);align-self:center">Mostrando ${total} actividades</span>
+</div>
+</div>`;
+html+=`<div class="stats-grid">
+<div class="stat-card yellow"><div class="label">Pendientes</div><div class="value">${pend}</div></div>
+<div class="stat-card"><div class="label">En ejecución</div><div class="value">${ejec}</div></div>
+<div class="stat-card green"><div class="label">Finalizadas</div><div class="value">${fin}</div></div>
+<div class="stat-card red"><div class="label">Vencidas</div><div class="value">${venc}</div></div>
+<div class="stat-card accent"><div class="label">% Cumplimiento</div><div class="value">${Math.round(promAvance)}%</div></div>
+</div>`;
+// Alerts
+let alertHTML='';
+allAcciones.forEach(a=>{if(a.fin&&new Date(a.fin)<new Date()&&a.estado!=='Finalizada')alertHTML+=`<div class="alert-box"><span>🚨</span><b>VENCIDA:</b> ${a.actividad||a.problema} — ${a.responsable||'N/A'} — ${a.fin}</div>`;});
+html+='<div id="seg-alertas">'+(alertHTML||'<div class="alert-box info"><span>✅</span>No hay alertas</div>')+'</div>';
+// By responsible
+let respData={};allAcciones.forEach(a=>{if(a.responsable){if(!respData[a.responsable])respData[a.responsable]={sum:0,cnt:0};respData[a.responsable].sum+=a.avance||0;respData[a.responsable].cnt++;}});
+html+='<div class="chart-container"><h3>📊 Avance por Responsable</h3>';
+Object.entries(respData).forEach(([r,d])=>{const avg=d.cnt>0?Math.round(d.sum/d.cnt):0;html+=`<div class="bar-row"><div class="bar-label" style="font-size:.78rem">${r}</div><div class="bar-track"><div class="bar-fill" style="width:${avg}%;background:${semaforoColor(avg)}">${avg}%</div></div></div>`;});
+html+='</div>';
+// Table
+html+='<div class="table-wrap"><table><thead><tr><th>Actividad</th><th>Palanca</th><th>Hospital</th><th>Periodicidad</th><th>Responsable</th><th>Inicio</th><th>Fin</th><th>Estado</th><th>% Avance</th><th>Cronograma</th></tr></thead><tbody>';
+allAcciones.forEach((a,i)=>{
+const estados=['Pendiente','En ejecución','Finalizada'];
+let sel=`<select onchange="updEstado(${i},this.value)" style="padding:.2rem;font-size:.72rem">`;
+estados.forEach(e=>sel+=`<option value="${e}" ${a.estado===e?'selected':''}>${e}</option>`);sel+='</select>';
+html+=`<tr><td style="font-size:.72rem">${a.actividad||a.problema||'-'}</td><td style="font-size:.72rem">${a.palanca||'-'}</td><td style="font-size:.72rem">${a.ese||a.area||'-'}</td><td><span class="pill pill-blue">${a.periodicidad||'-'}</span></td><td style="font-size:.72rem">${a.responsable||'-'}</td><td>${a.inicio||'-'}</td><td>${a.fin||'-'}</td><td>${sel}</td><td><input type="range" min="0" max="100" value="${a.avance||0}" onchange="updAvance(${i},this.value)" style="width:50px"> <span style="font-size:.7rem;font-weight:700">${a.avance||0}%</span></td><td><button class="btn" style="padding:.2rem .4rem;font-size:.68rem" onclick="verCronograma(${i})">📅</button></td></tr>`;
+});
+if(total===0)html+='<tr><td colspan="10" style="text-align:center;padding:2rem;color:var(--gray)">Sin acciones</td></tr>';
+html+='</tbody></table></div>';
+document.getElementById('section-seguimiento').innerHTML=html;
+}
+function multiSelectSeg(type){
+const selId='seg-f-'+(type==='regiones'?'region':type==='municipios'?'municipio':'ese');
+const sel=document.getElementById(selId);
+if(!sel)return;
+segFilters[type]=[...sel.selectedOptions].map(o=>o.value);
+renderSeguimiento();
+}
+function updEstado(idx,val){if(DB.acciones[idx]){DB.acciones[idx].estado=val;saveDB();logAudit(currentUser.email,'Actualizar estado',val);toast('✅ Actualizado');renderSeguimiento();}}
+function updAvance(idx,val){if(DB.acciones[idx]){DB.acciones[idx].avance=parseInt(val);saveDB();renderSeguimiento();}}
+function verCronograma(idx){
+const a=DB.acciones[idx];if(!a){toast('⚠️ Acción no encontrada',true);return;}
+const per=a.periodicidad||'Trimestral';
+let fechas=[];
+if(a.inicio){const start=new Date(a.inicio);const end=a.fin?new Date(a.fin):new Date(start.getFullYear()+1,start.getMonth(),start.getDate());const intervals={Mensual:1,Bimestral:2,Trimestral:3,Cuatrimestral:4,Semestral:6,Anual:12};const months=intervals[per]||3;let d=new Date(start);while(d<=end){fechas.push(d.toLocaleDateString('es-CO'));d.setMonth(d.getMonth()+months);}}
+let html=`<h2>📅 Cronograma: ${a.actividad||a.problema}</h2><p style="margin-bottom:1rem"><b>Periodicidad:</b> ${per} | <b>Inicio:</b> ${a.inicio||'-'} | <b>Fin:</b> ${a.fin||'-'}</p>`;
+if(fechas.length>0){html+='<table><thead><tr><th>#</th><th>Fecha</th><th>Estado</th></tr></thead><tbody>';fechas.forEach((f,i)=>{html+=`<tr><td>${i+1}</td><td>${f}</td><td><span class="pill pill-blue">Programada</span></td></tr>`;});html+='</tbody></table>';}else{html+='<p style="color:var(--gray)">Defina fecha de inicio</p>';}
+document.getElementById('modal-content').innerHTML=html;document.getElementById('modal').classList.add('show');
+}
+function closeModal(){document.getElementById('modal').classList.remove('show');}
+
+// ============================================================
+// CASOS DE PAÍS
+// ============================================================
+function renderCasos(){
+let html='<div class="card"><h2>🌍 Casos de País</h2><p class="subtitle">Repositorio de buenas prácticas internacionales en APS</p></div>';
+CASOS_PAIS.forEach(c=>{
+html+=`<div class="country-card" onclick="verCaso('${c.pais}')">
+<h4>${c.flag} ${c.pais}</h4>
+<div class="country-meta">📊 ${c.indicadores}</div>
+<p>${c.estrategia}</p>
+</div>`;
+});
+document.getElementById('section-casos').innerHTML=html;
+}
+function verCaso(pais){
+const c=CASOS_PAIS.find(x=>x.pais===pais);if(!c)return;
+let html=`<h2>${c.flag} ${c.pais}</h2>
+<p style="margin-bottom:1rem;color:var(--gray)">${c.contexto}</p>
+<h4 style="color:var(--bg)">Problema</h4><p style="margin-bottom:.5rem">${c.problema}</p>
+<h4 style="color:var(--bg)">Estrategia</h4><p style="margin-bottom:.5rem">${c.estrategia}</p>
+<h4 style="color:var(--bg)">Resultados</h4><p style="margin-bottom:.5rem">${c.resultados}</p>
+<h4 style="color:var(--bg)">Indicadores</h4><p style="margin-bottom:.5rem">${c.indicadores}</p>
+<h4 style="color:var(--bg)">Factores de Éxito</h4><p style="margin-bottom:.5rem">${c.factoresExito}</p>
+<h4 style="color:var(--bg)">Lecciones Aprendidas</h4><p style="margin-bottom:.5rem">${c.lecciones}</p>
+<h4 style="color:var(--bg)">Aplicabilidad para Colombia</h4><p style="margin-bottom:.5rem">${c.aplicabilidadColombia}</p>
+<h4 style="color:var(--bg)">Referencias</h4><p style="font-size:.78rem">${c.referencias}</p>`;
+document.getElementById('modal-content').innerHTML=html;document.getElementById('modal').classList.add('show');
+}
+
+// ============================================================
+// GLOSARIO
+// ============================================================
+function renderGlosario(){
+let html='<div class="card"><h2>📖 Glosario APS</h2><p class="subtitle">Términos clave del enfoque de Atención Primaria de Salud</p></div><div class="card">';
+GLOSARIO.forEach(g=>{
+html+=`<div class="glossary-item" onclick="this.classList.toggle('open')">
+<h4>${g.term} <span class="arrow">▶</span></h4>
+<div class="glossary-detail">
+<p><b>Definición:</b> ${g.def}</p>
+<p><b>Concepto:</b> ${g.concept}</p>
+<p><b>Ejemplo:</b> ${g.ejemplo}</p>
+<p><b>Normatividad:</b> ${g.normatividad}</p>
+<p><b>Aplicación:</b> ${g.aplicacion}</p>
+<p><b>Relación con APS:</b> ${g.relacionAPS}</p>
+</div>
+</div>`;
+});
+html+='</div>';
+document.getElementById('section-glosario').innerHTML=html;
+}
+
+// ============================================================
+// CONFIGURACIÓN
+// ============================================================
+function renderConfig(){
+let html='<div class="card"><h2>⚙️ Configuración del Sistema</h2><p class="subtitle">Parámetros de configuración y mantenimiento</p></div>';
+html+=`<div class="card">
+<h3>📊 Estadísticas del Sistema</h3>
+<div class="stats-grid">
+<div class="stat-card"><div class="label">Usuarios</div><div class="value">${DB.usuarios.length}</div></div>
+<div class="stat-card"><div class="label">Registros</div><div class="value">${DB.registros.length}</div></div>
+<div class="stat-card"><div class="label">Acciones</div><div class="value">${DB.acciones.length}</div></div>
+<div class="stat-card"><div class="label">Auditoría</div><div class="value">${DB.auditoria.length}</div></div>
+</div>
+</div>`;
+// Gestión de usuarios y contraseñas
+html+=`<div class="card">
+<h3>🔑 Gestión de Usuarios y Contraseñas</h3>
+<p style="font-size:.82rem;color:var(--gray);margin-bottom:1rem">Recuperar contraseñas, restablecer accesos y gestionar usuarios</p>
+<div class="table-wrap"><table><thead><tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Hospital/ESE</th><th>Estado</th><th>Contraseña</th><th>Acciones</th></tr></thead><tbody>`;
+DB.usuarios.forEach(u=>{
+html+=`<tr><td>${u.nombre}</td><td style="font-size:.78rem">${u.email}</td><td><span class="pill ${u.role==='admin'?'pill-yellow':'pill-blue'}">${u.role}</span></td><td style="font-size:.72rem">${u.ese||'-'}</td><td><span class="pill ${u.estado==='activo'?'pill-green':u.estado==='pendiente'?'pill-yellow':'pill-red'}">${u.estado}</span></td><td style="font-size:.72rem;font-family:monospace">${u.password}</td><td><button class="btn" style="padding:.2rem .5rem;font-size:.68rem" onclick="resetPass('${u.id}')">🔄 Resetear</button> <button class="btn btn-green" style="padding:.2rem .5rem;font-size:.68rem" onclick="showPass('${u.id}')">👁️ Ver</button> ${u.estado!=='activo'?'<button class="btn btn-green" style="padding:.2rem .5rem;font-size:.68rem" onclick="activateUser2(\''+u.id+'\')">✅ Activar</button>':'<button class="btn btn-red" style="padding:.2rem .5rem;font-size:.68rem" onclick="blockUser(\''+u.id+'\')">🚫 Bloquear</button>'}</td></tr>`;
+});
+html+='</tbody></table></div></div>';
+// Recuperación por correo
+html+=`<div class="card">
+<h3>📧 Recuperación de Acceso</h3>
+<p style="font-size:.82rem;color:var(--gray);margin-bottom:1rem">Buscar usuario por correo para recuperar o restablecer contraseña</p>
+<div class="form-grid">
+<div class="form-group"><label>Correo del usuario a recuperar</label><input type="email" id="rec-email" placeholder="correo@hospital.gov.co"></div>
+</div>
+<div style="margin-top:.5rem;display:flex;gap:.5rem;flex-wrap:wrap">
+<button class="btn btn-accent" onclick="searchUser()">🔍 Buscar Usuario</button>
+<button class="btn" onclick="resetAllPass()">🔄 Generar Contraseñas Temporales</button>
+</div>
+<div id="rec-result" style="margin-top:1rem"></div>
+</div>`;
+// Gestión de Datos
+html+=`<div class="card">
+<h3>💾 Gestión de Datos</h3>
+<div style="display:flex;gap:.5rem;flex-wrap:wrap">
+<button class="btn" onclick="exportBackup()">📥 Descargar Respaldo</button>
+<button class="btn btn-red" onclick="clearData()">🗑️ Limpiar Datos Demo</button>
+</div>
+</div>`;
+document.getElementById('section-config').innerHTML=html;
+}
+function searchUser(){
+const email=document.getElementById('rec-email').value.trim().toLowerCase();
+if(!email){toast('⚠️ Ingrese un correo',true);return;}
+const user=DB.usuarios.find(u=>u.email.toLowerCase()===email);
+const result=document.getElementById('rec-result');
+if(!user){
+result.innerHTML='<div class="alert-box"><span>⚠️</span><b>No encontrado:</b> No existe usuario con ese correo</div>';
+return;
+}
+result.innerHTML=`<div class="card" style="background:#f0f4f8;border:2px solid var(--bg2)">
+<h4 style="color:var(--bg)">👤 Usuario Encontrado</h4>
+<table style="width:100%;font-size:.82rem">
+<tr><td><b>Nombre:</b></td><td>${user.nombre}</td></tr>
+<tr><td><b>Correo:</b></td><td>${user.email}</td></tr>
+<tr><td><b>Rol:</b></td><td>${user.role}</td></tr>
+<tr><td><b>Hospital/ESE:</b></td><td>${user.ese||'-'}</td></tr>
+<tr><td><b>Cargo:</b></td><td>${user.cargo||'-'}</td></tr>
+<tr><td><b>Estado:</b></td><td><span class="pill ${user.estado==='activo'?'pill-green':user.estado==='pendiente'?'pill-yellow':'pill-red'}">${user.estado}</span></td></tr>
+<tr><td><b>Contraseña actual:</b></td><td style="font-family:monospace;font-weight:700">${user.password}</td></tr>
+</table>
+<div style="margin-top:.75rem;display:flex;gap:.5rem;flex-wrap:wrap">
+<button class="btn btn-accent" onclick="resetPass('${user.id}')">🔄 Generar Nueva Contraseña</button>
+${user.estado!=='activo'?'<button class="btn btn-green" onclick="activateUser2(\''+user.id+'\')">✅ Activar Cuenta</button>':'<button class="btn btn-red" onclick="blockUser(\''+user.id+'\')">🚫 Bloquear</button>'}
+<button class="btn" onclick="copyPass('${user.id}')">📋 Copiar Contraseña</button>
+</div>
+</div>`;
+logAudit(currentUser.email,'Búsqueda de usuario',email);
+}
+function resetPass(id){
+const u=DB.usuarios.find(x=>x.id===id);if(!u)return;
+const newPass=Math.random().toString(36).substring(2,8).toUpperCase();
+u.password=newPass;u.estado='activo';
+saveDB();logAudit(currentUser.email,'Resetear contraseña',u.email);
+toast('✅ Nueva contraseña: '+newPass);
+renderConfig();
+}
+function showPass(id){
+const u=DB.usuarios.find(x=>x.id===id);if(!u)return;
+toast('🔑 Contraseña de '+u.nombre+': '+u.password);
+}
+function copyPass(id){
+const u=DB.usuarios.find(x=>x.id===id);if(!u)return;
+if(navigator.clipboard){navigator.clipboard.writeText(u.password);toast('📋 Contraseña copiada');}
+else{toast('🔑 Contraseña: '+u.password);}
+}
+function activateUser2(id){
+const u=DB.usuarios.find(x=>x.id===id);if(!u)return;
+u.estado='activo';saveDB();logAudit(currentUser.email,'Activar usuario',u.email);
+toast('✅ Usuario activado: '+u.nombre);renderConfig();
+}
+function blockUser(id){
+const u=DB.usuarios.find(x=>x.id===id);if(!u)return;
+u.estado='bloqueado';saveDB();logAudit(currentUser.email,'Bloquear usuario',u.email);
+toast('🚫 Usuario bloqueado: '+u.nombre);renderConfig();
+}
+function resetAllPass(){
+DB.usuarios.forEach(u=>{u.password=Math.random().toString(36).substring(2,8).toUpperCase();});
+saveDB();logAudit(currentUser.email,'Resetear todas las contraseñas','Masivo');
+toast('✅ Contraseñas regeneradas');renderConfig();
+}
+function exportBackup(){
+const data=JSON.stringify(DB,null,2);
+const blob=new Blob([data],{type:'application/json'});
+const url=URL.createObjectURL(blob);
+const a=document.createElement('a');a.href=url;a.download='aps_backup_'+new Date().toISOString().substring(0,10)+'.json';a.click();
+URL.revokeObjectURL(url);toast('📥 Respaldo descargado');
+}
+function clearData(){
+if(!confirm('¿Limpiar todos los datos? Esta acción no se puede deshacer.'))return;
+DB.registros=[];DB.acciones=[];DB.auditoria=[];saveDB();toast('🗑️ Datos limpiados');renderConfig();
+}
+
+// ============================================================
+// EXPORTS
+// ============================================================
+function exportExcel(){
+let regs=DB.registros;if(currentUser.role==='evaluador')regs=regs.filter(r=>r.userId===currentUser.id);
+if(regs.length===0){toast('⚠️ Sin datos',true);return;}
+let csv='\uFEFFFecha,Periodo,Region,Municipio,ESE,Responsable,Cargo,Correo,Telefono,Estado,NivelGlobal,%\n';
+regs.forEach(r=>{const sc=getScore(r);csv+=`${r.fecha},${r.periodo},${r.region},${r.municipio},"${r.ese}",${r.responsable},${r.cargo},${r.correo},${r.telefono||''},${r.estado},${sc.toFixed(2)},${pct(sc)}\n`;});
+csv+='\n\nDETALLE POR PALANCA\nFecha,ESE,Palanca,Nivel,Porcentaje\n';
+regs.forEach(r=>{PALANCAS.forEach(p=>{const sc=getPalancaScore(r,p.id);if(sc>0)csv+=`${r.fecha},"${r.ese}",${p.nombre},${sc.toFixed(2)},${pct(sc)}\n`;});});
+const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob);
+const a=document.createElement('a');a.href=url;a.download='APS_Cundinamarca_'+new Date().toISOString().substring(0,10)+'.csv';a.click();URL.revokeObjectURL(url);toast('📥 Excel exportado');
+}
+function exportPDF(){
+let regs=DB.registros;if(currentUser.role==='evaluador')regs=regs.filter(r=>r.userId===currentUser.id);
+if(regs.length===0){toast('⚠️ Sin datos',true);return;}
+const w=window.open('','_blank');
+let html=`<html><head><title>APS Cundinamarca - Reporte</title><style>body{font-family:Segoe UI,sans-serif;margin:2rem}h1{color:#062F5F}table{width:100%;border-collapse:collapse;margin:1rem 0}th{background:#062F5F;color:#fff;padding:.5rem}td{padding:.4rem;border:1px solid #ddd}</style></head><body>`;
+html+=`<h1>Reporte APS Cundinamarca</h1><p>Fecha: ${new Date().toLocaleDateString('es-CO')}</p><p>Registros: ${regs.length}</p>`;
+html+='<table><tr><th>Fecha</th><th>Periodo</th><th>Región</th><th>Municipio</th><th>ESE</th><th>Responsable</th><th>Estado</th><th>Nivel</th></tr>';
+regs.forEach(r=>{const pc=pct(getScore(r));html+=`<tr><td>${r.fecha}</td><td>${r.periodo}</td><td>${r.region}</td><td>${r.municipio}</td><td>${r.ese}</td><td>${r.responsable}</td><td>${r.estado}</td><td>${pc}%</td></tr>`;});
+html+='</table><h2>Por Palanca</h2><table><tr><th>Palanca</th><th>Nivel</th></tr>';
+PALANCAS.forEach(p=>{let sum=0,cnt=0;regs.forEach(r=>{const s=getPalancaScore(r,p.id);if(s>0){sum+=s;cnt++;}});const pc=pct(cnt>0?sum/cnt:0);html+=`<tr><td>${p.nombre}</td><td>${pc}%</td></tr>`;});
+html+='</table></body></html>';
+w.document.write(html);w.document.close();w.print();toast('📄 PDF exportado');
+}
+function exportWord(){
+let regs=DB.registros;if(currentUser.role==='evaluador')regs=regs.filter(r=>r.userId===currentUser.id);
+if(regs.length===0){toast('⚠️ Sin datos',true);return;}
+let html=`<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>Plan de Acción APS</title></head><body style="font-family:Calibri,sans-serif">`;
+html+=`<h1 style="color:#062F5F">Plan de Acción APS Cundinamarca</h1><p>Fecha: ${new Date().toLocaleDateString('es-CO')}</p>`;
+// Auto actions
+let autoAcciones=[];
+DB.registros.forEach(r=>{PALANCAS.forEach(p=>{const sc=getPalancaScore(r,p.id);const pc=pct(sc);if(pc>0&&pc<80){let prioridad=pc<40?'ALTA':pc<60?'MEDIA':'BAJA';autoAcciones.push({palanca:p.nombre,problema:`Nivel bajo (${pc}%)`,objetivo:`Mejorar a ≥80%`,actividad:`Implementar ${p.nombre.toLowerCase()}`,responsable:r.responsable,hospital:r.ese,prioridad});}});});
+html+='<h2>Acciones de Mejora</h2><table border="1" cellpadding="5"><tr style="background:#062F5F;color:white"><th>Palanca</th><th>Problema</th><th>Objetivo</th><th>Actividad</th><th>Responsable</th><th>Hospital</th><th>Prioridad</th></tr>';
+autoAcciones.forEach(a=>{html+=`<tr><td>${a.palanca}</td><td>${a.problema}</td><td>${a.objetivo}</td><td>${a.actividad}</td><td>${a.responsable}</td><td>${a.hospital}</td><td>${a.prioridad}</td></tr>`;});
+DB.acciones.forEach(a=>{html+=`<tr><td>${a.palanca}</td><td>${a.problema}</td><td>${a.objetivo}</td><td>${a.actividad}</td><td>${a.responsable}</td><td>${a.area}</td><td>${a.prioridad||'-'}</td></tr>`;});
+html+='</table></body></html>';
+const blob=new Blob(['\ufeff',html],{type:'application/msword'});
+const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='Plan_Accion_APS.doc';a.click();URL.revokeObjectURL(url);toast('📝 Word exportado');
+}
+function exportPPT(){
+const regs=DB.registros;if(currentUser.role==='evaluador')regs=regs.filter(r=>r.userId===currentUser.id);
+if(regs.length===0){toast('⚠️ Sin datos',true);return;}
+// Generate HTML slides as PPT-compatible
+const w=window.open('','_blank');
+let html=`<html><head><title>Presentación APS</title><style>body{font-family:Segoe UI;margin:0;padding:2rem;background:#062F5F;color:white}.slide{page-break-after:always;margin-bottom:2rem;padding:2rem;background:white;color:#1e293b;border-radius:12px}h1{color:#062F5F}table{width:100%;border-collapse:collapse}th{background:#062F5F;color:white;padding:.5rem}td{padding:.4rem;border:1px solid #ddd}</style></head><body>`;
+html+=`<div class="slide"><h1>APS Cundinamarca</h1><p>Sistema de Autoevaluación APS</p><p>Fecha: ${new Date().toLocaleDateString('es-CO')}</p></div>`;
+html+=`<div class="slide"><h1>Resumen Ejecutivo</h1><p>Registros: ${regs.length}</p><p>Hospitales: ${[...new Set(regs.map(r=>r.ese))].length}</p><p>Nivel Global: ${pct(regs.reduce((s,r)=>s+getScore(r),0)/regs.length)}%</p></div>`;
+html+=`<div class="slide"><h1>Resultados por Palanca</h1><table><tr><th>Palanca</th><th>Nivel</th></tr>`;
+PALANCAS.forEach(p=>{let sum=0,cnt=0;regs.forEach(r=>{const s=getPalancaScore(r,p.id);if(s>0){sum+=s;cnt++;}});const pc=pct(cnt>0?sum/cnt:0);html+=`<tr><td>${p.nombre}</td><td>${pc}%</td></tr>`;});
+html+='</table></div>';
+html+=`<div class="slide"><h1>Ranking de Hospitales</h1><table><tr><th>#</th><th>Hospital</th><th>Nivel</th></tr>`;
+regs.map(r=>({r,pc:pct(getScore(r))})).sort((a,b)=>b.pc-a.pc).forEach((row,i)=>{html+=`<tr><td>${i+1}</td><td>${row.r.ese}</td><td>${row.pc}%</td></tr>`;});
+html+='</table></div></body></html>';
+w.document.write(html);w.document.close();w.print();toast('📊 PowerPoint exportado');
+}
+function exportJSON(){
+let regs=DB.registros;if(currentUser.role==='evaluador')regs=regs.filter(r=>r.userId===currentUser.id);
+const data={metadata:{exportDate:new Date().toISOString(),totalRecords:regs.length,source:'APS Cundinamarca'},registros:regs.map(r=>({...r,nivelGlobal:getScore(r),porcentajeGlobal:pct(getScore(r)),palancas:PALANCAS.map(p=>({nombre:p.nombre,nivel:getPalancaScore(r,p.id),porcentaje:pct(getPalancaScore(r,p.id))}))}))};
+const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);
+const a=document.createElement('a');a.href=url;a.download='APS_PowerBI_'+new Date().toISOString().substring(0,10)+'.json';a.click();URL.revokeObjectURL(url);toast('🔧 JSON exportado');
+}
+
+// ============================================================
+// DEMO DATA
+// ============================================================
+function initDemoData(){
+if(DB.registros.length>0)return;
+const demos=[
+{region:'Sur',municipio:'Fusagasugá',ese:'E.S.E. HOSPITAL SAN RAFAEL DE FUSAGASUGA',resp:'Carlos Evaluador',cargo:'Coordinador APS',userId:'U2',respuestas:{'6_0':3,'6_1':4,'6_2':3,'6_3':2,'6_4':2,'7_0':2,'7_1':2,'7_2':3,'7_3':2,'7_4':3,'8_0':3,'8_1':3,'8_2':2,'8_3':2,'8_4':2,'9_0':2,'9_1':2,'9_2':1,'9_3':1,'9_4':2,'10_0':3,'10_1':3,'10_2':2,'10_3':2,'10_4':2,'11_0':2,'11_1':2,'11_2':1,'11_3':1,'11_4':1,'12_0':2,'12_1':2,'12_2':1,'12_3':2,'12_4':1,'13_0':2,'13_1':2,'13_2':1,'13_3':1,'13_4':1}},
+{region:'Sabana Centro',municipio:'Chía',ese:'E.S.E. HOSPITAL SAN ANTONIO CHIA',resp:'Maria Perez',cargo:'Directora Cientifica',userId:'U2',respuestas:{'6_0':4,'6_1':4,'6_2':4,'6_3':3,'6_4':3,'7_0':3,'7_1':3,'7_2':4,'7_3':3,'7_4':4,'8_0':4,'8_1':4,'8_2':3,'8_3':3,'8_4':3,'9_0':3,'9_1':3,'9_2':3,'9_3':2,'9_4':3,'10_0':4,'10_1':4,'10_2':3,'10_3':3,'10_4':3,'11_0':3,'11_1':3,'11_2':3,'11_3':2,'11_4':2,'12_0':3,'12_1':3,'12_2':2,'12_3':3,'12_4':2,'13_0':3,'13_1':3,'13_2':3,'13_3':2,'13_4':2}},
+{region:'Suroccidente',municipio:'Girardot',ese:'ESE HOSPITAL UNIVERSITARIO DE LA SAMARITANA',resp:'Jorge Martinez',cargo:'Gerente',userId:'U2',respuestas:{'6_0':3,'6_1':3,'6_2':3,'6_3':3,'6_4':2,'7_0':3,'7_1':3,'7_2':3,'7_3':2,'7_4':3,'8_0':3,'8_1':2,'8_2':2,'8_3':2,'8_4':2,'9_0':2,'9_1':2,'9_2':2,'9_3':2,'9_4':2,'10_0':3,'10_1':3,'10_2':2,'10_3':2,'10_4':2,'11_0':2,'11_1':2,'11_2':2,'11_3':2,'11_4':1,'12_0':2,'12_1':2,'12_2':2,'12_3':2,'12_4':1,'13_0':2,'13_1':2,'13_2':2,'13_3':1,'13_4':1}}
+];
+demos.forEach((d,i)=>{
+DB.registros.push({id:'DEMO'+i,fecha:'2026-0'+(7-i)+'-15',periodo:'2026-Q'+(1+i%2),region:d.region,municipio:d.municipio,ese:d.ese,responsable:d.resp,cargo:d.cargo,correo:d.resp.toLowerCase().replace(' ','.')+'@hospital.gov.co',telefono:'310 000 000'+i,userId:d.userId,estado:'Completo',respuestas:d.respuestas,fechaMod:new Date().toISOString()});
+});
+saveDB();logAudit('Sistema','Inicialización','Datos demo cargados');
+}
+
+// Functions are global (top-level function declarations) — no need for explicit window exposure
+// But keep for safety with file:// protocol:
+window.showLogin=showLogin;window.showRecovery=showRecovery;window.showRegister=showRegister;
+window.updateRegMuni=updateRegMuni;window.updateRegEse=updateRegEse;window.submitRegister=submitRegister;
+window.doLogin=doLogin;window.doLogout=doLogout;window.navTo=navTo;
+window.updateAEMuni=updateAEMuni;window.updateAEEse=updateAEEse;window.setAEResp=setAEResp;window.saveAutoeval=saveAutoeval;
+window.approveUser=approveUser;window.rejectUser=rejectUser;window.editReg=editReg;
+window.addAccion=addAccion;window.updEstado=updEstado;window.updAvance=updAvance;window.verCronograma=verCronograma;window.closeModal=closeModal;
+window.verCaso=verCaso;window.updateEduProgress=updateEduProgress;
+window.exportExcel=exportExcel;window.exportPDF=exportPDF;window.exportWord=exportWord;window.exportPPT=exportPPT;window.exportJSON=exportJSON;
+window.exportBackup=exportBackup;window.clearData=clearData;window.val=val;
+window.toggleDashFilter=multiSelectDash;window.toggleSegFilter=multiSelectSeg;
+window.multiSelectDash=multiSelectDash;window.multiSelectSeg=multiSelectSeg;
+window.searchUser=searchUser;window.resetPass=resetPass;window.showPass=showPass;window.copyPass=copyPass;
+window.activateUser2=activateUser2;window.blockUser=blockUser;window.resetAllPass=resetAllPass;
+// Debug
+console.log('APS Cundinamarca v2 loaded. showLogin:', typeof showLogin, 'doLogin:', typeof doLogin, 'searchUser:', typeof searchUser);
+// Attach click handlers for landing + login buttons (file:// safe)
+document.addEventListener('DOMContentLoaded',function(){
+var landingBtn=document.getElementById('landing-login-btn');
+if(landingBtn)landingBtn.onclick=function(e){e.preventDefault();showLogin();return false;};
+var lnkRec=document.getElementById('lnk-recovery');
+if(lnkRec)lnkRec.onclick=function(e){e.preventDefault();showRecovery();return false;};
+var lnkReg=document.getElementById('lnk-register');
+if(lnkReg)lnkReg.onclick=function(e){e.preventDefault();showRegister();return false;};
+console.log('Buttons attached: landing='+(!!landingBtn)+' recovery='+(!!lnkRec)+' register='+(!!lnkReg));
+});
+// Also run immediately if DOM already loaded
+if(document.readyState!=='loading'){
+var landingBtn2=document.getElementById('landing-login-btn');
+if(landingBtn2)landingBtn2.onclick=function(e){e.preventDefault();showLogin();return false;};
+var lnkRec2=document.getElementById('lnk-recovery');
+if(lnkRec2)lnkRec2.onclick=function(e){e.preventDefault();showRecovery();return false;};
+var lnkReg2=document.getElementById('lnk-register');
+if(lnkReg2)lnkReg2.onclick=function(e){e.preventDefault();showRegister();return false;};
+}
+</script>
+</body>
+</html>

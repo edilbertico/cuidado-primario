@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APS Manager — Plataforma de Autoevaluación de Atención Primaria de Salud</title>
+<style>
+:root{
+  --bg:#062F5F;--bg2:#0B4F9E;--accent:#FCE803;--red:#C8102E;--green:#0A8A3F;
+  --light:#f0f4f8;--gray:#64748b;--dark:#1e293b;--white:#fff;
+  --radius:12px;--shadow:0 4px 24px rgba(6,47,95,.12);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--light);color:var(--dark);line-height:1.6}
+/* Header */
+.header{background:linear-gradient(135deg,var(--bg),var(--bg2));color:var(--white);padding:1rem 2rem;position:sticky;top:0;z-index:100;box-shadow:var(--shadow)}
+.header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.logo{display:flex;align-items:center;gap:.75rem}
+.logo-icon{width:44px;height:44px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:800;color:var(--bg)}
+.logo h1{font-size:1.15rem;font-weight:700}
+.logo p{font-size:.7rem;opacity:.85}
+.nav{display:flex;gap:.5rem;flex-wrap:wrap}
+.nav button{background:rgba(255,255,255,.12);color:var(--white);border:1px solid rgba(255,255,255,.2);padding:.5rem 1rem;border-radius:8px;cursor:pointer;font-size:.85rem;transition:.2s}
+.nav button:hover,.nav button.active{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+/* Container */
+.container{max-width:1200px;margin:0 auto;padding:2rem}
+/* Cards */
+.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:1.5rem;margin-bottom:1.5rem}
+.card h2{color:var(--bg);font-size:1.3rem;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem}
+.card h2 .num{background:var(--bg2);color:var(--white);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem}
+.card .subtitle{color:var(--gray);font-size:.85rem;margin-bottom:1rem}
+/* Tabs / sections */
+.section{display:none}
+.section.active{display:block}
+/* Dashboard */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-bottom:1.5rem}
+.stat-card{background:var(--white);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);border-left:4px solid var(--bg2)}
+.stat-card .label{font-size:.8rem;color:var(--gray);text-transform:uppercase;letter-spacing:.05em}
+.stat-card .value{font-size:2rem;font-weight:800;color:var(--bg)}
+.stat-card .desc{font-size:.78rem;color:var(--gray);margin-top:.25rem}
+.stat-card.green{border-left-color:var(--green)}
+.stat-card.yellow{border-left-color:var(--accent)}
+.stat-card.red{border-left-color:var(--red)}
+.stat-card.green .value{color:var(--green)}
+.stat-card.yellow .value{color:#b8860b}
+.stat-card.red .value{color:var(--red)}
+/* Overview cards */
+.overview-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem}
+.overview-card{background:var(--white);border-radius:var(--radius);padding:1.5rem;box-shadow:var(--shadow);cursor:pointer;transition:.2s;border-top:4px solid var(--bg2)}
+.overview-card:hover{transform:translateY(-3px);box-shadow:0 8px 32px rgba(6,47,95,.18)}
+.overview-card .icon{font-size:2rem;margin-bottom:.5rem}
+.overview-card h3{color:var(--bg);font-size:1.05rem;margin-bottom:.25rem}
+.overview-card p{font-size:.8rem;color:var(--gray)}
+.overview-card .progress-bar{height:6px;background:#e2e8f0;border-radius:3px;margin-top:.75rem;overflow:hidden}
+.overview-card .progress-fill{height:100%;background:var(--bg2);border-radius:3px;transition:width .5s}
+/* Evaluation */
+.eval-intro{background:var(--bg);color:var(--white);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.5rem}
+.eval-intro h2{color:var(--white)}
+.eval-intro p{opacity:.9;font-size:.9rem}
+.eval-intro .scale{display:flex;gap:1rem;flex-wrap:wrap;margin-top:1rem}
+.eval-intro .scale-item{background:rgba(255,255,255,.1);padding:.5rem 1rem;border-radius:8px;font-size:.8rem}
+.eval-intro .scale-item b{color:var(--accent)}
+.question-block{background:var(--white);border-radius:var(--radius);padding:1.25rem;margin-bottom:1rem;box-shadow:var(--shadow)}
+.question-block .q-text{font-weight:600;color:var(--dark);margin-bottom:.75rem;font-size:.95rem}
+.question-block .q-text .q-num{color:var(--bg2);font-weight:800;margin-right:.5rem}
+.scale-options{display:flex;gap:.5rem;flex-wrap:wrap}
+.scale-options label{display:flex;flex-direction:column;align-items:center;padding:.5rem .75rem;border:2px solid #e2e8f0;border-radius:8px;cursor:pointer;transition:.2s;min-width:80px;font-size:.8rem}
+.scale-options label:hover{border-color:var(--bg2)}
+.scale-options input{display:none}
+.scale-options input:checked + .opt-text{font-weight:700}
+.scale-options label:has(input:checked){border-color:var(--bg2);background:#eff6ff}
+.scale-options .opt-num{font-size:1.2rem;font-weight:800;color:var(--bg2)}
+.scale-options .opt-text{font-size:.72rem;color:var(--gray);text-align:center;margin-top:.15rem}
+/* Results */
+.results-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+@media(max-width:768px){.results-grid{grid-template-columns:1fr}}
+.radar-container{background:var(--white);border-radius:var(--radius);padding:1.5rem;box-shadow:var(--shadow)}
+.radar-container h3{color:var(--bg);margin-bottom:1rem}
+.bar-list{display:flex;flex-direction:column;gap:.75rem}
+.bar-item{display:flex;align-items:center;gap:.75rem}
+.bar-item .bar-label{width:180px;font-size:.85rem;font-weight:600}
+.bar-item .bar-track{flex:1;height:24px;background:#e2e8f0;border-radius:6px;overflow:hidden}
+.bar-item .bar-fill{height:100%;border-radius:6px;display:flex;align-items:center;justify-content:flex-end;padding-right:.5rem;color:var(--white);font-size:.75rem;font-weight:700;transition:width 1s}
+/* Plan de acción */
+.plan-table{width:100%;border-collapse:collapse;font-size:.85rem}
+.plan-table th{background:var(--bg);color:var(--white);padding:.75rem;text-align:left;font-weight:600}
+.plan-table td{padding:.75rem;border-bottom:1px solid #e2e8f0}
+.plan-table tr:nth-child(even){background:#f8fafc}
+.plan-table .priority-high{color:var(--red);font-weight:700}
+.plan-table .priority-med{color:#b8860b;font-weight:700}
+.plan-table .priority-low{color:var(--green);font-weight:700}
+/* Glossary */
+.glossary-item{border-bottom:1px solid #e2e8f0;padding:1rem 0}
+.glossary-item h4{color:var(--bg);font-size:.95rem}
+.glossary-item p{font-size:.85rem;color:var(--gray);margin-top:.25rem}
+/* Country cases */
+.country-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem}
+.country-card{background:var(--white);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);border-left:4px solid var(--accent)}
+.country-card h4{color:var(--bg);font-size:.95rem;margin-bottom:.25rem}
+.country-card .country-flag{font-size:1.5rem}
+.country-card .country-topic{font-size:.78rem;color:var(--bg2);font-weight:600;margin-bottom:.5rem}
+.country-card p{font-size:.82rem;color:var(--gray)}
+/* Buttons */
+.btn{background:var(--bg2);color:var(--white);border:none;padding:.75rem 1.5rem;border-radius:8px;cursor:pointer;font-size:.9rem;font-weight:600;transition:.2s}
+.btn:hover{background:var(--bg)}
+.btn-accent{background:var(--accent);color:var(--bg)}
+.btn-accent:hover{background:#e0c702}
+.btn-large{padding:1rem 2rem;font-size:1rem}
+/* Save status */
+.save-indicator{position:fixed;bottom:1rem;right:1rem;background:var(--green);color:var(--white);padding:.5rem 1rem;border-radius:8px;font-size:.8rem;box-shadow:var(--shadow);opacity:0;transition:.3s;z-index:200}
+.save-indicator.show{opacity:1}
+/* Responsive */
+@media(max-width:768px){
+  .container{padding:1rem}
+  .header{padding:.75rem 1rem}
+  .logo h1{font-size:1rem}
+  .nav button{padding:.4rem .7rem;font-size:.78rem}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon">APS</div>
+      <div>
+        <h1>APS Manager</h1>
+        <p>Autoevaluación de Atención Primaria de Salud · Marco OMS 2024</p>
+      </div>
+    </div>
+    <nav class="nav">
+      <button onclick="showSection('dashboard')" class="active" id="nav-dashboard">Dashboard</button>
+      <button onclick="showSection('eval')" id="nav-eval">Autoevaluación</button>
+      <button onclick="showSection('results')" id="nav-results">Resultados</button>
+      <button onclick="showSection('plan')" id="nav-plan">Plan de Acción</button>
+      <button onclick="showSection('cases')" id="nav-cases">Casos de País</button>
+      <button onclick="showSection('glossary')" id="nav-glossary">Glosario</button>
+    </nav>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- DASHBOARD -->
+<div class="section active" id="section-dashboard">
+  <div class="card">
+    <h2>📊 Dashboard de Implementación APS</h2>
+    <p class="subtitle">Autoevaluación del enfoque de Atención Primaria de Salud según el Informe Mundial OMS/UNICEF 2024</p>
+  </div>
+
+  <div class="stats-grid" id="stats-grid"></div>
+
+  <div class="card">
+    <h2>🎯 Las 3 Esferas de la APS</h2>
+    <p class="subtitle">Componentes del enfoque integral según la Declaración de Astaná 2018</p>
+    <div class="overview-grid">
+      <div class="overview-card" onclick="showSection('eval')">
+        <div class="icon">🏥</div>
+        <h3>Servicios de Salud Integrados</h3>
+        <p>Atención primaria como núcleo: promoción, prevención, curación, rehabilitación y cuidados paliativos</p>
+        <div class="progress-bar"><div class="progress-fill" id="sphere1-bar" style="width:0%"></div></div>
+      </div>
+      <div class="overview-card" onclick="showSection('eval')">
+        <div class="icon">🤝</div>
+        <h3>Participación Comunitaria</h3>
+        <p>Empoderamiento de personas y comunidades en su propia salud y bienestar</p>
+        <div class="progress-bar"><div class="progress-fill" id="sphere2-bar" style="width:0%"></div></div>
+      </div>
+      <div class="overview-card" onclick="showSection('eval')">
+        <div class="icon">🌐</div>
+        <h3>Acción Multisectorial</h3>
+        <p>Políticas públicas saludables: vivienda, educación, transporte, seguridad social</p>
+        <div class="progress-bar"><div class="progress-fill" id="sphere3-bar" style="width:0%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>⚙️ Las 4 C de la Atención Primaria (Starfield)</h2>
+    <p class="subtitle">Características fundamentales que definen una atención primaria sólida</p>
+    <div class="overview-grid">
+      <div class="overview-card"><div class="icon">1️⃣</div><h3>Primer Contacto</h3><p>Punto de entrada al sistema de salud</p></div>
+      <div class="overview-card"><div class="icon">2️⃣</div><h3>Continua</h3><p>Relación longitudinal a lo largo del tiempo</p></div>
+      <div class="overview-card"><div class="icon">3️⃣</div><h3>Integral</h3><p>Atención de todas las necesidades de salud</p></div>
+      <div class="overview-card"><div class="icon">4️⃣</div><h3>Coordinada</h3><p>Coordinación entre niveles y servicios</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- AUTOEVALUACIÓN -->
+<div class="section" id="section-eval">
+  <div class="eval-intro">
+    <h2>📋 Autoevaluación de Palancas Operativas</h2>
+    <p>Evalúe el nivel de implementación de cada palanca operativa del enfoque de APS en su institución.</p>
+    <div class="scale">
+      <div class="scale-item"><b>1</b> No implementado</div>
+      <div class="scale-item"><b>2</b> Inicial</div>
+      <div class="scale-item"><b>3</b> En desarrollo</div>
+      <div class="scale-item"><b>4</b> Establecido</div>
+      <div class="scale-item"><b>5</b> Optimizado</div>
+    </div>
+  </div>
+  <div id="eval-container"></div>
+  <div style="text-align:center;margin-top:1.5rem">
+    <button class="btn btn-accent btn-large" onclick="calculateResults()">📊 Calcular Resultados</button>
+  </div>
+</div>
+
+<!-- RESULTADOS -->
+<div class="section" id="section-results">
+  <div class="card">
+    <h2>📈 Resultados de Autoevaluación</h2>
+    <p class="subtitle">Nivel de madurez por palanca operativa y por esfera de la APS</p>
+  </div>
+  <div class="results-grid">
+    <div class="radar-container">
+      <h3>🎯 Radar de Madurez APS</h3>
+      <canvas id="radarChart" width="400" height="400"></canvas>
+    </div>
+    <div class="radar-container">
+      <h3>📊 Nivel por Palanca</h3>
+      <div class="bar-list" id="bar-list"></div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>🌐 Resultados por Esfera</h2>
+    <div class="overview-grid" id="sphere-results"></div>
+  </div>
+</div>
+
+<!-- PLAN DE ACCIÓN -->
+<div class="section" id="section-plan">
+  <div class="card">
+    <h2>📝 Plan de Acción Generado</h2>
+    <p class="subtitle">Priorización basada en los resultados de autoevaluación</p>
+  </div>
+  <div class="card">
+    <table class="plan-table">
+      <thead>
+        <tr><th>Prioridad</th><th>Palanca Operativa</th><th>Nivel Actual</th><th>Acción Recomendada</th><th>Plazo</th></tr>
+      </thead>
+      <tbody id="plan-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- CASOS DE PAÍS -->
+<div class="section" id="section-cases">
+  <div class="card">
+    <h2>🌍 Casos de País (Ilustraciones OMS)</h2>
+    <p class="subtitle">50+ ejemplos de implementación de APS en diferentes contextos</p>
+  </div>
+  <div class="country-grid" id="country-grid"></div>
+</div>
+
+<!-- GLOSARIO -->
+<div class="section" id="section-glossary">
+  <div class="card">
+    <h2>📖 Glosario APS</h2>
+    <p class="subtitle">Términos clave del enfoque de Atención Primaria de Salud</p>
+  </div>
+  <div class="card" id="glossary-container"></div>
+</div>
+
+</div><!-- /container -->
+
+<div class="save-indicator" id="save-indicator">✓ Progreso guardado</div>
+
+<script>
+// ============================================================
+// DATOS EXTRAÍDOS DE LOS 5 PDFs DEL INFORME MUNDIAL APS OMS 2024
+// ============================================================
+
+const APS_DATA = {
+  palancas: [
+    {
+      id: 6, nombre: "Modelos de Atención", capitulo: 6, esfera: 1,
+      icon: "🏥", descripcion: "Reorientar modelos hacia APS: atención integral, integrada y centrada en las personas",
+      preguntas: [
+        { text: "¿Existe un modelo de atención definido que incorpore servicios integrales (promocional, preventivo, curativo, rehabilitación)?", msg: "El modelo de atención representa opciones estratégicas sobre qué servicios se ofrecen, dónde y cómo (OMS/UNICEF 2020)" },
+        { text: "¿Se utilizan equipos multiprofesionales (médico, enfermera, trabajador social, farmacéutico)?", msg: "Los equipos multidisciplinarios dirigidos por generalistas mejoran la calidad y coordinación" },
+        { text: "¿Existen listados/enlaces de población asignada a cada equipo de atención primaria?", msg: "El diseño del servicio asigna personas a un proveedor de atención primaria (panelado)" },
+        { text: "¿Se garantiza la derivación oportuna y contrarreferencia desde atención primaria a servicios agudos/especializados?", msg: "Promover derivación oportuna y contrarreferencia eficaz es clave en APS" },
+        { text: "¿Se implementa gestión y coordinación de casos en la comunidad?", msg: "La gestión de casos comunitarios fortalece los vínculos entre instalaciones y comunidad" }
+      ]
+    },
+    {
+      id: 7, nombre: "Gobernanza de la Salud", capitulo: 7, esfera: 2,
+      icon: "⚖️", descripcion: "Autonomía local, marcos de políticas, participación comunitaria en decisiones",
+      preguntas: [
+        { text: "¿Existe descentralización de la autonomía en la toma de decisiones a nivel local?", msg: "La autonomía local facilita la capacidad de respuesta; las unidades locales están mejor posicionadas para mejorar acceso, equidad y eficiencia" },
+        { text: "¿Hay marcos de políticas y acuerdos de planificación conjunta que apoyen la integración de servicios?", msg: "Sin marcos de políticas y clarificación de roles, la planificación conjunta no prospera" },
+        { text: "¿Se incluyen comunidades y partes interesadas en la identificación de problemas y soluciones?", msg: "Incluir a las comunidades en identificar causas fundamentales es clave para coproducir mejora de calidad" },
+        { text: "¿Existe garantía de calidad, seguimiento regular y ciclos de retroalimentación?", msg: "La garantía de calidad y el seguimiento regular son fundamentales para una gestión eficaz" },
+        { text: "¿Hay liderazgo que fomente una cultura de equidad y rendición de cuentas?", msg: "Un liderazgo eficaz apoya la calidad en APS; la gobernanza tiene un papel crítico en la integración" }
+      ]
+    },
+    {
+      id: 8, nombre: "Personal Sanitario y Asistencial", capitulo: 8, esfera: 1,
+      icon: "👨‍⚕️", descripcion: "Planificación estratégica, educación, reclutamiento, retención y equipos multiprofesionales",
+      preguntas: [
+        { text: "¿Existe planificación estratégica de la fuerza laboral basada en análisis del mercado laboral de salud?", msg: "La planificación es estratégica si se basa en análisis exhaustivo del mercado laboral, fortalezas y deficiencias" },
+        { text: "¿Se cuenta con educación pre-servicio y formación continua de alta calidad adaptada a APS?", msg: "La educación pre-servicio y formación continua deben evolucionar para lograr competencias APS" },
+        { text: "¿Se implementan estrategias de reclutamiento y retención con condiciones de trabajo atractivas?", msg: "Condiciones de trabajo atractivas y entornos seguros son cruciales para reclutar y retener personal" },
+        { text: "¿Se abordan las desigualdades de género, antigüedad y remuneración del personal?", msg: "Se promueve equidad de género cuando la APS ofrece roles valorados a las mujeres, abordando desigualdades de remuneración" },
+        { text: "¿Se implementa el cambio de tareas (task-shifting) y equipos multiprofesionales?", msg: "La definición de alcance de práctica, división y transferencia de tareas es esencial para permitir el cambio de tareas" }
+      ]
+    },
+    {
+      id: 9, nombre: "Financiamiento de la Salud", capitulo: 9, esfera: 3,
+      icon: "💰", descripcion: "Recaudación, mancomunación, asignación y compra estratégica para APS",
+      preguntas: [
+        { text: "¿Existe voluntad política y compromiso de financiamiento público suficiente para APS?", msg: "La voluntad política es el factor principal para asegurar la financiación de la salud y de la APS" },
+        { text: "¿Se utilizan fondos comunes (pooling) para financiar APS y reducir pagos de bolsillo?", msg: "El uso de fondos comunes reduce la carga financiera de los pacientes y los incentivos reducen uso inadecuado de servicios costosos" },
+        { text: "¿Se han definido paquetes integrales de beneficios alineados con financiamiento público?", msg: "Definir y alinear claramente paquetes integrales con financiamiento público es clave para APS" },
+        { text: "¿Se utilizan métodos de pago a proveedores que incentiven APS (capitación, pago por desempeño)?", msg: "Los arreglos de financiamiento pueden diseñarse para apoyar el cambio hacia APS con combinación personalizada de métodos de pago" },
+        { text: "¿Se gestiona adecuadamente las finanzas públicas para flujo oportuno de recursos?", msg: "Invertir en buena gestión de finanzas públicas permite flujo oportuno de recursos para continuidad de servicios" }
+      ]
+    },
+    {
+      id: 10, nombre: "Medicamentos y Servicios Farmacéuticos", capitulo: 10, esfera: 1,
+      icon: "💊", descripcion: "Acceso equitativo, uso racional, cadena de suministro y prescripción de calidad",
+      preguntas: [
+        { text: "¿Se garantiza acceso asequible a medicamentos esenciales con financiamiento público?", msg: "Garantizar acceso asequible requiere uso de financiamiento público para pagar medicamentos esenciales y uso de genéricos" },
+        { text: "¿Se utiliza prescripción sistemática de genéricos y biosimilares?", msg: "La prescripción sistemática de genéricos y cambio a biosimilares mantiene bajos los costos" },
+        { text: "¿Existe gestión de existencias y prácticas de adquisición eficientes?", msg: "La mejora de gestión de existencias y prácticas de adquisición favorecen acceso y eficiencia" },
+        { text: "¿Se coordina entre farmacias comunitarias y prescriptores?", msg: "Una coordinación más estrecha entre farmacias comunitarias y prescriptores facilita acceso y empoderamiento comunitario" },
+        { text: "¿Se involucra a pacientes y comunidades en alfabetización en medicamentos y autocuidado?", msg: "Involucrar a pacientes en programas educativos fomenta alfabetización en medicina y autocuidado responsable" }
+      ]
+    },
+    {
+      id: 11, nombre: "Tecnologías Sanitarias", capitulo: 11, esfera: 1,
+      icon: "🔬", descripcion: "Tecnología apropiada para diagnóstico temprano, autocuidado y coordinación",
+      preguntas: [
+        { text: "¿Se utiliza tecnología para identificación temprana de factores de riesgo y diagnóstico?", msg: "El uso de tecnología facilita identificación temprana de factores de riesgo y diagnóstico temprano" },
+        { text: "¿Existen sistemas de apoyo clínico y derivación que permitan compartir información entre niveles?", msg: "La atención integrada se vuelve más efectiva gracias a herramientas de apoyo clínico y sistemas de derivación" },
+        { text: "¿Se promueve el autocuidado con tecnología (dispositivos de monitoreo)?", msg: "Las tecnologías sanitarias pueden ser motor del autocuidado, especialmente en prevención y tratamiento" },
+        { text: "¿Se capacita al personal y pacientes en uso de tecnologías sanitarias?", msg: "El despliegue de tecnologías requiere capacitación de habilidades para fuerza laboral y pacientes" },
+        { text: "¿Se garantizan servicios de apoyo, gestión y mantenimiento de equipos?", msg: "Se necesitan servicios de apoyo, gestión y mantenimiento, y fomento de confianza en privacidad de datos" }
+      ]
+    },
+    {
+      id: 12, nombre: "Infraestructura Sanitaria", capitulo: 12, esfera: 1,
+      icon: "🏗️", descripcion: "WASH, edificios, equipos no médicos, electricidad, internet y mantenimiento",
+      preguntas: [
+        { text: "¿Se cumplen requisitos básicos de WASH (agua, saneamiento, higiene) y gestión de residuos?", msg: "Requisitos básicos como WASH y residuos sólidos son prerrequisito para atención primaria de alta calidad" },
+        { text: "¿La infraestructura considera necesidades médicas y no médicas de personas y comunidades?", msg: "La inversión debe considerar necesidades médicas y no médicas de las personas y comunidades" },
+        { text: "¿Se planifica el patrón de demanda futura e innovación tecnológica en el diseño?", msg: "Se debe considerar el patrón probable de demanda futura y de innovación tecnológica" },
+        { text: "¿Se garantizan conexiones fiables de electricidad e internet?", msg: "La gestión y conexiones fiables de electricidad e internet son fundamentales" },
+        { text: "¿Se contemplan costos de ciclo de vida y mantenimiento, no solo costos iniciales?", msg: "La inversión en infraestructura debe considerar más que costos de capital iniciales, incluyendo mantenimiento de ciclo de vida" }
+      ]
+    },
+    {
+      id: 13, nombre: "Sistemas de Información y Digital", capitulo: 13, esfera: 1,
+      icon: "💻", descripcion: "Registros electrónicos, identificador único, datos de calidad, interoperabilidad, salud digital",
+      preguntas: [
+        { text: "¿Existen registros electrónicos de salud y un identificador único del paciente?", msg: "Los registros electrónicos, un identificador único y controles de calidad automatizados son herramientas clave" },
+        { text: "¿Se garantizan datos de alta calidad, fiables y seguros que se analizan y comparten?", msg: "Los sistemas respaldan mejor APS cuando hay datos de alta calidad, fiables y seguros, que se analizan, comparten e interpretan" },
+        { text: "¿Existen sistemas de datos interoperables con definiciones estandarizadas?", msg: "La integración requiere sistemas de datos interoperables con definiciones de datos estandarizadas" },
+        { text: "¿Se cuenta con disponibilidad oportuna de datos y recursos para entrada/gestión eficaz?", msg: "La disponibilidad oportuna significa contar con recursos para entrada y gestión eficaz de datos" },
+        { text: "¿Se tienen en cuenta las desigualdades en la adopción y uso de soluciones digitales?", msg: "Esto se desarrolla e implementa teniendo en cuenta las desigualdades en la adopción y el uso" }
+      ]
+    }
+  ],
+  esferas: [
+    { id: 1, nombre: "Servicios de Salud Integrados", color: "#0B4F9E" },
+    { id: 2, nombre: "Participación Comunitaria", color: "#0A8A3F" },
+    { id: 3, nombre: "Acción Multisectorial", color: "#FCE803" }
+  ],
+  casos: [
+    { pais: "Brasil", flag: "🇧🇷", topic: "Modelos de atención (Cap 4)", desc: "Reforma del sistema de salud con APS como eje central, cobertura universal a través del SUS" },
+    { pais: "Etiopía", flag: "🇪🇹", topic: "Implementación APS (Cap 4)", desc: "Despliegue de trabajadores de salud comunitarios (HEWs) para cobertura rural" },
+    { pais: "Kazajstán", flag: "🇰🇿", topic: "Implementación APS (Cap 4)", desc: "Reforma con financiamiento y gobernanza orientada a APS" },
+    { pais: "Vietnam", flag: "🇻🇳", topic: "Implementación APS (Cap 4)", desc: "Red de commune health centers como base del sistema" },
+    { pais: "Lituania", flag: "🇱🇹", topic: "Modelos de atención (Cap 6)", desc: "Reorientación hacia equipos de atención primaria centros de salud familiar" },
+    { pais: "Eslovenia", flag: "🇸🇮", topic: "Modelos de atención (Cap 6)", desc: "Equipos multiprofesionales con médicos de familia enrolados" },
+    { pais: "República Checa", flag: "🇨🇿", topic: "Modelos y financiamiento", desc: "Sistema basado en aseguramiento social con puerta de entrada por AP" },
+    { pais: "Indonesia", flag: "🇮🇩", topic: "Gobernanza (Cap 7)", desc: "Descentralización y participación comunitaria en planificación sanitaria" },
+    { pais: "España", flag: "🇪🇸", topic: "Gobernanza (Cap 7)", desc: "Sistema nacional de salud con autonomía de comunidades autónomas" },
+    { pais: "Moldova", flag: "🇲🇩", topic: "Gobernanza (Cap 7)", desc: "Reformas de gobernanza con participación social fortalecida" },
+    { pais: "Costa Rica", flag: "🇨🇷", topic: "Personal sanitario (Cap 8)", desc: "Equipos básicos de atención integral de salud (EBAIS)" },
+    { pais: "Reino Unido", flag: "🇬🇧", topic: "Personal sanitario (Cap 8)", desc: "NHS con modelos de atención primaria basados en GP partnerships" },
+    { pais: "Zambia", flag: "🇿🇲", topic: "Personal sanitario (Cap 8)", desc: "Trabajadores de salud comunitarios en zonas rurales" },
+    { pais: "Albania", flag: "🇦🇱", topic: "Personal sanitario (Cap 8)", desc: "Reforma de atención primaria con capacitación de médicos de familia" },
+    { pais: "Finlandia", flag: "🇫🇮", topic: "Personal sanitario (Cap 8)", desc: "Centros de salud municipales con equipos multiprofesionales" },
+    { pais: "China", flag: "🇨🇳", topic: "Financiamiento y calidad (Cap 9,14)", desc: "Cobertura universal de seguro y reforma de atención primaria comunitaria" },
+    { pais: "Ucrania", flag: "🇺🇦", topic: "Financiamiento (Cap 9)", desc: "Reforma de financiamiento con pago por capita a proveedores de AP" },
+    { pais: "Estonia", flag: "🇪🇪", topic: "Financiamiento y digital (Cap 9,13)", desc: "Sistema digital pionero con registro electrónico nacional integrado" },
+    { pais: "Afganistán", flag: "🇦🇫", topic: "Financiamiento (Cap 9)", desc: "Financiamiento de donantes con enfoque en APS básica" },
+    { pais: "Dinamarca", flag: "🇩🇰", topic: "Sistemas de información (Cap 13)", desc: "Líder mundial en registros de salud electrónicos e interoperabilidad" },
+    { pais: "Estados Unidos", flag: "🇺🇸", topic: "Sistemas de información (Cap 13)", desc: "Adopción de EHR con HITECH Act y modelos de atención centrada" },
+    { pais: "Sudáfrica", flag: "🇿🇦", topic: "Sistemas de información (Cap 13)", desc: "MomConnect: mHealth para salud materno-infantil que escaló a COVID-19" },
+    { pais: "Tailandia", flag: "🇹🇭", topic: "Equidad y acceso (Cap 15)", desc: "Cobertura Universal con esquema de 30 baht y red de AP comunitaria" },
+    { pais: "Canadá", flag: "🇨🇦", topic: "Equidad y acceso (Cap 15)", desc: "Modelos de APS para poblaciones indígenas y remotas" },
+    { pais: "Bangladesh", flag: "🇧🇩", topic: "Equidad y acceso (Cap 15)", desc: "Extensión comunitaria con trabajadores de salud y clínicas rurales" }
+  ],
+  glosario: [
+    { term: "APS (Atención Primaria de Salud)", def: "Enfoque integral que abarca a toda la sociedad para la salud y el bienestar, basado en principios de equidad, derechos humanos y justicia social (OMS/UNICEF 2018)" },
+    { term: "Atención Primaria", def: "Primer nivel de contacto de la población con el sistema de salud, componente central pero no único de la APS (Starfield, 1994)" },
+    { term: "Las 4 C de Starfield", def: "Cuatro características de la atención primaria: primer contacto, continua, integral y coordinada (Jiménez et al., 2021)" },
+    { term: "Cobertura Sanitaria Universal (CSU)", def: "Garantizar que todas las personas reciban los servicios de salud que necesitan sin sufrir dificultades financieras" },
+    { term: "Declaración de Alma-Ata (1978)", def: "Primera declaración internacional que definió la APS como clave para alcanzar 'Salud para Todos en el año 2000'" },
+    { term: "Declaración de Astaná (2018)", def: "Renovación del compromiso con la APS en el 40º aniversario de Alma-Ata, reafirmando la APS como clave para la CSU" },
+    { term: "Palancas Operativas", def: "Dimensiones que es necesario abordar para que la APS funcione: gobernanza, financiamiento, recursos humanos, medicamentos, salud digital, etc." },
+    { term: "3 Esferas de la APS", def: "1) Servicios de salud integrados, 2) Participación comunitaria, 3) Acción multisectorial/políticas públicas saludables" },
+    { term: "Marco Operativo OMS/UNICEF", def: "Documento 'Traducir la visión en acción' (2020) que operacionaliza la Declaración de Astaná" },
+    { term: "Marco de Medición de APS", def: "Sistema de monitoreo de la OMS que mide el desempeño de sistemas de salud desde una perspectiva de APS" },
+    { term: "PHCPI", def: "Primary Health Care Performance Initiative - Iniciativa para medir el rendimiento de la atención primaria" },
+    { term: "ODS", def: "Objetivos de Desarrollo Sostenible (2015) - 17 objetivos globales, el ODS 3 es 'Salud y bienestar'" },
+    { term: "Task-shifting", def: "Transferencia racional de tareas de profesionales con mayor calificación a personal con capacitación más corta" },
+    { term: "Compra estratégica", def: "Mecanismo de asignación de fondos a proveedores basado en necesidades, calidad y resultados de salud" },
+    { term: "Hospitalizaciones sensibles a APS", def: "Hospitalizaciones que podrían prevenirse con una atención primaria efectiva (diabetes, hipertensión, EPOC, asma, IC)" },
+    { term: "WASH", def: "Water, Sanitation and Hygiene - requisitos básicos de agua, saneamiento e higiene en instalaciones de salud" },
+    { term: "Identificador único", def: "Identificación única del paciente que permite seguimiento longitudinal en el sistema de salud" },
+    { term: "Interoperabilidad", def: "Capacidad de los sistemas de información de salud para intercambiar y usar datos de forma estandarizada" },
+    { term: "Panelado (empanelment)", def: "Asignación de individuos a un proveedor de atención primaria o equipo específico" },
+    { term: "Resiliencia del sistema de salud", def: "Capacidad de absorber, adaptarse y transformarse para afrontar crisis y mantener el rendimiento bajo presión" }
+  ]
+};
+
+// ============================================================
+// ESTADO DE LA APLICACIÓN
+// ============================================================
+let respuestas = {};
+try { respuestas = JSON.parse(localStorage.getItem('aps_respuestas') || '{}'); } catch(e) { respuestas = {}; }
+
+// ============================================================
+// FUNCIONES
+// ============================================================
+function showSection(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('section-' + name).classList.add('active');
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('nav-' + name).classList.add('active');
+  if (name === 'results') renderResults();
+  if (name === 'plan') renderPlan();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderStats() {
+  let totalPregs = 0, respondidas = 0, sumaTotal = 0, sumaMax = 0;
+  APS_DATA.palancas.forEach(p => {
+    p.preguntas.forEach((q, i) => {
+      totalPregs++;
+      const key = `${p.id}_${i}`;
+      if (respuestas[key]) {
+        respondidas++;
+        sumaTotal += respuestas[key];
+        sumaMax += 5;
+      }
+    });
+  });
+  const promedio = respondidas > 0 ? (sumaTotal / respondidas).toFixed(1) : '—';
+  const pct = totalPregs > 0 ? Math.round((respondidas / totalPregs) * 100) : 0;
+  const nivelGlobal = sumaMax > 0 ? Math.round((sumaTotal / sumaMax) * 100) : 0;
+
+  let nivelColor = 'green', nivelText = 'Óptimo';
+  if (nivelGlobal < 40) { nivelColor = 'red'; nivelText = 'Crítico'; }
+  else if (nivelGlobal < 60) { nivelColor = 'yellow'; nivelText = 'En desarrollo'; }
+  else if (nivelGlobal < 80) { nivelColor = 'green'; nivelText = 'Establecido'; }
+
+  document.getElementById('stats-grid').innerHTML = `
+    <div class="stat-card"><div class="label">Progreso</div><div class="value">${pct}%</div><div class="desc">${respondidas} de ${totalPregs} preguntas</div></div>
+    <div class="stat-card ${nivelColor}"><div class="label">Nivel Global APS</div><div class="value">${nivelGlobal}%</div><div class="desc">${nivelText}</div></div>
+    <div class="stat-card"><div class="label">Promedio madurez</div><div class="value">${promedio}</div><div class="desc">Escala 1-5</div></div>
+    <div class="stat-card"><div class="label">Palancas evaluadas</div><div class="value">${APS_DATA.palancas.length}</div><div class="desc">de ${APS_DATA.palancas.length} operativas</div></div>
+  `;
+
+  // Actualizar barras de esferas
+  [1,2,3].forEach(s => {
+    const esferaPalancas = APS_DATA.palancas.filter(p => p.esfera === s);
+    let sSum = 0, sMax = 0;
+    esferaPalancas.forEach(p => {
+      p.preguntas.forEach((q, i) => {
+        const key = `${p.id}_${i}`;
+        if (respuestas[key]) { sSum += respuestas[key]; sMax += 5; }
+      });
+    });
+    const pct = sMax > 0 ? Math.round((sSum / sMax) * 100) : 0;
+    const bar = document.getElementById(`sphere${s}-bar`);
+    if (bar) bar.style.width = pct + '%';
+  });
+}
+
+function renderEval() {
+  const container = document.getElementById('eval-container');
+  let html = '';
+  APS_DATA.palancas.forEach(palanca => {
+    const esfera = APS_DATA.esferas.find(e => e.id === palanca.esfera);
+    html += `<div class="card">
+      <h2><span class="num">${palanca.capitulo}</span>${palanca.icon} ${palanca.nombre}</h2>
+      <p class="subtitle">${palanca.descripcion} · Esfera: ${esfera.nombre}</p>`;
+    palanca.preguntas.forEach((q, i) => {
+      const key = `${palanca.id}_${i}`;
+      const current = respuestas[key] || 0;
+      html += `<div class="question-block">
+        <div class="q-text"><span class="q-num">${i+1}.</span>${q.text}</div>
+        <div class="scale-options">`;
+      for (let v = 1; v <= 5; v++) {
+        html += `<label>
+          <input type="radio" name="${key}" value="${v}" ${current===v?'checked':''} onchange="saveRespuesta('${key}',${v})">
+          <span class="opt-num">${v}</span>
+          <span class="opt-text">${['','No implementado','Inicial','En desarrollo','Establecido','Optimizado'][v]}</span>
+        </label>`;
+      }
+      html += `</div></div>`;
+    });
+    html += `</div>`;
+  });
+  container.innerHTML = html;
+}
+
+function saveRespuesta(key, value) {
+  respuestas[key] = value;
+  localStorage.setItem('aps_respuestas', JSON.stringify(respuestas));
+  showSaveIndicator();
+  renderStats();
+}
+
+function showSaveIndicator() {
+  const ind = document.getElementById('save-indicator');
+  ind.classList.add('show');
+  setTimeout(() => ind.classList.remove('show'), 1500);
+}
+
+function getPalancaScore(palanca) {
+  let sum = 0, count = 0;
+  palanca.preguntas.forEach((q, i) => {
+    const key = `${palanca.id}_${i}`;
+    if (respuestas[key]) { sum += respuestas[key]; count++; }
+  });
+  return { promedio: count > 0 ? sum / count : 0, respondidas: count, total: palanca.preguntas.length };
+}
+
+function getEsferaScore(esferaId) {
+  const palancas = APS_DATA.palancas.filter(p => p.esfera === esferaId);
+  let sum = 0, count = 0;
+  palancas.forEach(p => {
+    const score = getPalancaScore(p);
+    sum += score.promedio;
+    if (score.respondidas > 0) count++;
+  });
+  return count > 0 ? sum / count : 0;
+}
+
+function renderResults() {
+  // Barras horizontales
+  const barList = document.getElementById('bar-list');
+  let barHTML = '';
+  APS_DATA.palancas.forEach(p => {
+    const score = getPalancaScore(p);
+    const pct = Math.round((score.promedio / 5) * 100);
+    let color = '#C8102E';
+    if (pct >= 80) color = '#0A8A3F';
+    else if (pct >= 60) color = '#0B4F9E';
+    else if (pct >= 40) color = '#b8860b';
+    barHTML += `<div class="bar-item">
+      <div class="bar-label">${p.icon} ${p.nombre}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${color}">${pct}%</div></div>
+    </div>`;
+  });
+  barList.innerHTML = barHTML;
+
+  // Radar chart (canvas)
+  drawRadar();
+
+  // Esferas
+  const sphereResults = document.getElementById('sphere-results');
+  let sphereHTML = '';
+  APS_DATA.esferas.forEach(e => {
+    const score = getEsferaScore(e.id);
+    const pct = Math.round((score / 5) * 100);
+    sphereHTML += `<div class="overview-card" style="border-top-color:${e.color}">
+      <div class="icon">${e.id === 1 ? '🏥' : e.id === 2 ? '🤝' : '🌐'}</div>
+      <h3>${e.nombre}</h3>
+      <p>Nivel de madurez: <b>${score.toFixed(1)}/5</b> (${pct}%)</p>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${e.color}"></div></div>
+    </div>`;
+  });
+  sphereResults.innerHTML = sphereHTML;
+
+  renderStats();
+}
+
+function drawRadar() {
+  const canvas = document.getElementById('radarChart');
+  const ctx = canvas.getContext('2d');
+  const cx = 200, cy = 200, maxR = 150;
+  const n = APS_DATA.palancas.length;
+  ctx.clearRect(0, 0, 400, 400);
+
+  // Grid (5 niveles)
+  for (let level = 1; level <= 5; level++) {
+    const r = (maxR / 5) * level;
+    ctx.beginPath();
+    for (let i = 0; i <= n; i++) {
+      const angle = (Math.PI * 2 / n) * i - Math.PI / 2;
+      const x = cx + r * Math.cos(angle);
+      const y = cy + r * Math.sin(angle);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = '#e2e8f0';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // Ejes
+  for (let i = 0; i < n; i++) {
+    const angle = (Math.PI * 2 / n) * i - Math.PI / 2;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + maxR * Math.cos(angle), cy + maxR * Math.sin(angle));
+    ctx.strokeStyle = '#cbd5e1';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // Data polygon
+  ctx.beginPath();
+  for (let i = 0; i < n; i++) {
+    const p = APS_DATA.palancas[i];
+    const score = getPalancaScore(p);
+    const r = (score.promedio / 5) * maxR;
+    const angle = (Math.PI * 2 / n) * i - Math.PI / 2;
+    const x = cx + r * Math.cos(angle);
+    const y = cy + r * Math.sin(angle);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(11, 79, 158, 0.2)';
+  ctx.fill();
+  ctx.strokeStyle = '#0B4F9E';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Points + labels
+  ctx.font = '11px Segoe UI';
+  ctx.fillStyle = '#1e293b';
+  for (let i = 0; i < n; i++) {
+    const p = APS_DATA.palancas[i];
+    const score = getPalancaScore(p);
+    const r = (score.promedio / 5) * maxR;
+    const angle = (Math.PI * 2 / n) * i - Math.PI / 2;
+    const x = cx + r * Math.cos(angle);
+    const y = cy + r * Math.sin(angle);
+    ctx.beginPath();
+    ctx.arc(x, y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = '#0B4F9E';
+    ctx.fill();
+
+    // Label outside
+    const lx = cx + (maxR + 20) * Math.cos(angle);
+    const ly = cy + (maxR + 20) * Math.sin(angle);
+    ctx.fillStyle = '#062F5F';
+    ctx.textAlign = Math.abs(Math.cos(angle)) < 0.1 ? 'center' : (Math.cos(angle) > 0 ? 'left' : 'right');
+    ctx.textBaseline = 'middle';
+    ctx.fillText(p.nombre.substring(0, 15), lx, ly);
+  }
+}
+
+function renderPlan() {
+  const tbody = document.getElementById('plan-tbody');
+  let items = [];
+  APS_DATA.palancas.forEach(p => {
+    const score = getPalancaScore(p);
+    if (score.respondidas === 0) return;
+    const pct = (score.promedio / 5) * 100;
+    let priority, pClass, plazo, accion;
+    if (pct < 40) {
+      priority = 'ALTA'; pClass = 'priority-high'; plazo = '3-6 meses';
+      accion = `Implementar ${p.nombre.toLowerCase()}: establecer marco básico, designar responsable y desarrollar plan piloto`;
+    } else if (pct < 60) {
+      priority = 'MEDIA'; pClass = 'priority-med'; plazo = '6-12 meses';
+      accion = `Fortalecer ${p.nombre.toLowerCase()}: consolidar procesos, capacitar personal y establecer indicadores`;
+    } else if (pct < 80) {
+      priority = 'BAJA'; pClass = 'priority-low'; plazo = '12-18 meses';
+      accion = `Optimizar ${p.nombre.toLowerCase()}: refinar prácticas, integrar tecnología y evaluar resultados`;
+    } else {
+      priority = 'MANTENER'; pClass = 'priority-low'; plazo = 'Continuo';
+      accion = `Sostener y documentar buenas prácticas en ${p.nombre.toLowerCase()}`;
+    }
+    items.push({ p, priority, pClass, plazo, accion, pct: Math.round(pct) });
+  });
+  items.sort((a, b) => a.pct - b.pct);
+
+  let html = '';
+  items.forEach(it => {
+    html += `<tr>
+      <td class="${it.pClass}">${it.priority}</td>
+      <td><b>${it.p.icon} ${it.p.nombre}</b><br><small style="color:#64748b">Cap ${it.p.capitulo}</small></td>
+      <td>${it.pct}%</td>
+      <td>${it.accion}</td>
+      <td>${it.plazo}</td>
+    </tr>`;
+  });
+  if (items.length === 0) {
+    html = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:#64748b">Complete la autoevaluación para generar el plan de acción</td></tr>';
+  }
+  tbody.innerHTML = html;
+}
+
+function renderCases() {
+  const grid = document.getElementById('country-grid');
+  let html = '';
+  APS_DATA.casos.forEach(c => {
+    html += `<div class="country-card">
+      <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem">
+        <span class="country-flag">${c.flag}</span>
+        <h4>${c.pais}</h4>
+      </div>
+      <div class="country-topic">${c.topic}</div>
+      <p>${c.desc}</p>
+    </div>`;
+  });
+  grid.innerHTML = html;
+}
+
+function renderGlossary() {
+  const container = document.getElementById('glossary-container');
+  let html = '';
+  APS_DATA.glosario.forEach(g => {
+    html += `<div class="glossary-item">
+      <h4>${g.term}</h4>
+      <p>${g.def}</p>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+renderStats();
+renderEval();
+renderCases();
+renderGlossary();
+</script>
+</body>
+</html>
